@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.android.customization.model.clock.ClockSectionController;
 import com.android.customization.model.color.ColorSectionController;
 import com.android.customization.model.grid.GridOptionsManager;
 import com.android.customization.model.grid.GridSectionController;
@@ -49,6 +50,9 @@ public final class DefaultCustomizationSections implements CustomizationSections
         // Dark/Light theme section.
         sectionControllers.add(new DarkModeSectionController(activity,
                 lifecycleOwner.getLifecycle()));
+
+        // Clock section.
+        sectionControllers.add(new ClockSectionController(sectionNavigationController));
 
         // Themed app icon section.
         sectionControllers.add(new ThemedIconSectionController(
