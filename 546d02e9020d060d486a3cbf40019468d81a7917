@@ -33,6 +33,24 @@
       "message": "Same for this, but less of a concern.",
       "revId": "546d02e9020d060d486a3cbf40019468d81a7917",
       "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2b6e4199_dabb1feb",
+        "filename": "AndroidManifest.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-04-24T20:46:57Z",
+      "side": 1,
+      "message": "I would try just dropping this perm, and seeing what crashes or doesn\u0027t look right. To see if we can get away without needing `platform` cert.",
+      "parentUuid": "1702c865_b892ec21",
+      "revId": "546d02e9020d060d486a3cbf40019468d81a7917",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
     }
   ]
 }
