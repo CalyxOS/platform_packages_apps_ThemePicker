@@ -51,6 +51,24 @@
       "parentUuid": "1702c865_b892ec21",
       "revId": "546d02e9020d060d486a3cbf40019468d81a7917",
       "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "69a58794_ae6aecf1",
+        "filename": "AndroidManifest.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2023-04-26T14:07:18Z",
+      "side": 1,
+      "message": "If the permission is removed, then ThemePicker is no longer able to apply icon packs to secondary users (and likely work profiles?) and causes the UI to get stuck in a weird state.",
+      "parentUuid": "2b6e4199_dabb1feb",
+      "revId": "546d02e9020d060d486a3cbf40019468d81a7917",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
     }
   ]
 }
