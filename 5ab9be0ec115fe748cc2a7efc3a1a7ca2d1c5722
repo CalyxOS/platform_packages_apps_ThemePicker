@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5d950d72_60dbdb4f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000062
+      },
+      "writtenOn": "2023-06-19T14:30:37Z",
+      "side": 1,
+      "message": "Patchset was just to fix a merge conflict in imports after QPR3",
+      "revId": "5ab9be0ec115fe748cc2a7efc3a1a7ca2d1c5722",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    }
+  ]
+}
