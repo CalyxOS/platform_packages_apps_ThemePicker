@@ -159,6 +159,24 @@
       "parentUuid": "2124bcef_67fc9335",
       "revId": "546d02e9020d060d486a3cbf40019468d81a7917",
       "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cb3ba559_6f3d9523",
+        "filename": "AndroidManifest.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-20T16:47:38Z",
+      "side": 1,
+      "message": "It\u0027d be better to do it as a followup instead since this is merged upstream.\n\n352097: ThemePicker: Bring back fonts, icon pack, shape customization | https://review.lineageos.org/c/LineageOS/android_packages_apps_ThemePicker/+/352097 (Can click on Lineage at the top Change-Id to quickly check this)\n\nMind doing that? Thanks!",
+      "parentUuid": "9620948d_114833a9",
+      "revId": "546d02e9020d060d486a3cbf40019468d81a7917",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
     }
   ]
 }
