@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c285fba0_ed6cb204",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-20T06:43:04Z",
+      "side": 1,
+      "message": "Can this be rebased on android13? Otherwise it\u0027s blocked by `platform` key in 16705: ThemePicker: Bring back fonts, icon pack, shape customization | https://review.calyxos.org/c/CalyxOS/platform_packages_apps_ThemePicker/+/16705",
+      "revId": "8555ae961f87e525e3c19f7547a0ac24c8222fa5",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    }
+  ]
+}
