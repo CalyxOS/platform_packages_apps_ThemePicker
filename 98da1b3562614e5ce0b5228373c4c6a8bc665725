@@ -16,6 +16,24 @@
       "message": "`name\u003d\"ThemePicker.apk\" certificate\u003d\"build/make/target/product/security/testkey.x509.pem\" private_key\u003d\"build/make/target/product/security/testkey.pk8\" partition\u003d\"system_ext\"`",
       "revId": "98da1b3562614e5ce0b5228373c4c6a8bc665725",
       "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0a3288e3_1c67e2f7",
+        "filename": "Android.bp",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-20T17:03:00Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "33b6a3b3_2f26fef0",
+      "revId": "98da1b3562614e5ce0b5228373c4c6a8bc665725",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
     }
   ]
 }
