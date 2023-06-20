@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f64b9e0a_2d24fbc5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000062
+      },
+      "writtenOn": "2023-06-20T17:43:43Z",
+      "side": 1,
+      "message": "Works for me, but worst case resulting from this change should be that Live Wallpapers is still somehow broken, which it already was.",
+      "revId": "85aee0979674148be04fe7a7446c799e2b45da07",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    }
+  ]
+}
