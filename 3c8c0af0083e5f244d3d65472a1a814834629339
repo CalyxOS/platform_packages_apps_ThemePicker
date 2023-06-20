@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f56d7473_55b8e7ae",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000062
+      },
+      "writtenOn": "2023-06-20T14:51:14Z",
+      "side": 1,
+      "message": "Maybe this change is why we don\u0027t seem to need `INTERACT_ACROSS_USERS_FULL` or `platform` certificate.",
+      "revId": "3c8c0af0083e5f244d3d65472a1a814834629339",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    }
+  ]
+}
