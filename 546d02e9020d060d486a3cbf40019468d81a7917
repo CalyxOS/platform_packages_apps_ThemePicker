@@ -18,6 +18,24 @@
       "serverId": "35266860-6252-469c-a67d-185064479fc0"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "970316ae_4e0f7c89",
+        "filename": "Android.bp",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1000062
+      },
+      "writtenOn": "2023-06-20T14:46:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "33d0707d_4500bb76",
+      "revId": "546d02e9020d060d486a3cbf40019468d81a7917",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1702c865_b892ec21",
@@ -121,6 +139,24 @@
       "side": 1,
       "message": "I\u0027m still not seeing any problems in main user, work profile, or secondary user with certificate set to \"\" and without INTERACT_ACROSS_USERS_FULL, on a new build with factory reset. Anyone mind if I upload a new patchset?",
       "parentUuid": "83b2388c_e07e5859",
+      "revId": "546d02e9020d060d486a3cbf40019468d81a7917",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9620948d_114833a9",
+        "filename": "AndroidManifest.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000062
+      },
+      "writtenOn": "2023-06-20T14:46:44Z",
+      "side": 1,
+      "message": "Done. This is still -2\u0027d anyway so I went ahead and uploaded.",
+      "parentUuid": "2124bcef_67fc9335",
       "revId": "546d02e9020d060d486a3cbf40019468d81a7917",
       "serverId": "35266860-6252-469c-a67d-185064479fc0"
     }
