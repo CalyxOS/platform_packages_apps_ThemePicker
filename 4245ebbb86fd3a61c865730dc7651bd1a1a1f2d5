@@ -16,6 +16,24 @@
       "message": "Update to latest upstream patchset",
       "revId": "4245ebbb86fd3a61c865730dc7651bd1a1a1f2d5",
       "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dc3610d1_111acd33",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2023-06-21T19:51:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "400a8352_217c96e0",
+      "revId": "4245ebbb86fd3a61c865730dc7651bd1a1a1f2d5",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
     }
   ]
 }
