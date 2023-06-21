@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "400a8352_217c96e0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2023-06-21T19:33:00Z",
+      "side": 1,
+      "message": "Update to latest upstream patchset",
+      "revId": "4245ebbb86fd3a61c865730dc7651bd1a1a1f2d5",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    }
+  ]
+}
