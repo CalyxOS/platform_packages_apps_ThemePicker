@@ -1,5 +1,23 @@
 {
-  "comments": [],
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "462415a8_bbfab960",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000034
+      },
+      "writtenOn": "2023-10-05T16:37:01Z",
+      "side": 1,
+      "message": "fyi in master that was added officially along other nice fixes for the usual manifest entries by both Sony/Google ",
+      "revId": "232da68d37d1484cebbb6746f7a4cbe77da23e63",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    }
+  ],
   "submitRequirementResults": [
     {
       "submitRequirement": {
