@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9e75ba3d_8c774c4f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2023-10-25T18:24:21Z",
+      "side": 1,
+      "message": "Let\u0027s squash this to the original commit",
+      "revId": "9645ed5f87a1e2ded84d7b6825d1b35854b7abe7",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    }
+  ]
+}
