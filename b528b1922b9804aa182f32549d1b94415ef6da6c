@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ab529226_4c44547c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000062
+      },
+      "writtenOn": "2023-10-25T18:19:59Z",
+      "side": 1,
+      "message": "Moved the settings to new UI, removed from old UI.",
+      "revId": "b528b1922b9804aa182f32549d1b94415ef6da6c",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    }
+  ]
+}
