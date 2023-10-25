@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aabf0f91_08f7c3d6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000062
+      },
+      "writtenOn": "2023-10-25T18:22:03Z",
+      "side": 1,
+      "message": "Not needed in 14. Shows in new layout with Ie7a10f7e \"Enable lockscreen shortcuts (quick affordances)\"\n\nunless we still want to support the old layout for some reason",
+      "revId": "fe07055c11c997098420fd6a273c142008fff525",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    }
+  ]
+}
