@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9c966fc9_9866ec43",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000062
+      },
+      "writtenOn": "2023-10-25T20:55:42Z",
+      "side": 1,
+      "message": "This now causes some normal-looking padding to be removed, and the Change wallpaper button directly touches the lockscreen shortcuts section, so perhaps we don\u0027t need it now?",
+      "revId": "753d96bc4c36854a98e2d8edcd8c93de2c206c0b",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    }
+  ]
+}
