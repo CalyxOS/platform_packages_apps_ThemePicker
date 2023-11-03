@@ -94,6 +94,8 @@ java_defaults {
         ":ThemePicker_src_overrides",
     ],
 
+    required: ["android.software.theme_picker.xml"],
+
     use_embedded_native_libs: true,
 
     resource_zips: [":WallpaperPicker2_res", ":ThemePicker_res", ":ThemePicker_res_overrides"],
@@ -101,11 +103,18 @@ java_defaults {
     optimize: {
         enabled: false,
     },
-    kotlincflags: ["-Xjvm-default=enable"],
+    kotlincflags: ["-Xjvm-default=all"],
     certificate: "",
 
     privileged: true,
     system_ext_specific: true,
+}
+
+prebuilt_etc {
+    name: "android.software.theme_picker.xml",
+    system_ext_specific: true,
+    sub_dir: "permissions",
+    src: "android.software.theme_picker.xml",
 }
 
 //
@@ -118,5 +127,5 @@ android_app {
     platform_apis: true,
     manifest: "AndroidManifest.xml",
     additional_manifests: [":WallpaperPicker2_Manifest"],
-    overrides: ["WallpaperPicker2"],
+    overrides: ["WallpaperCropper", "WallpaperPicker", "WallpaperPicker2"],
 }
