@@ -39,6 +39,6 @@
         <item>com.android.messaging</item>
         <item>com.android.contacts</item>
         <item>com.android.dialer</item>
-        <item>org.lineageos.glimpse</item>
+        <item>org.calyxos.glimpse</item>
     </array>
 </resources>
