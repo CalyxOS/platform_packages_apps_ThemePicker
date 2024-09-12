@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5a5e360c_ad0ef4a7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2024-09-12T23:06:23Z",
+      "side": 1,
+      "message": "`packages/apps/ThemePicker/res/drawable/check_circle_grey_large.xml:25: error: resource drawable/ic_check_24dp not found`",
+      "revId": "719456e0db828fe1f8291303c4f908c028d12b57",
+      "serverId": "35266860-6252-469c-a67d-185064479fc0"
+    }
+  ]
+}
