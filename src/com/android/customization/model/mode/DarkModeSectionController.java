@@ -42,7 +42,6 @@ import com.android.customization.picker.mode.DarkModeSectionView;
 import com.android.themepicker.R;
 import com.android.wallpaper.model.CustomizationSectionController;
 import com.android.wallpaper.system.UiModeManagerWrapper;
-
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.util.concurrent.ExecutorService;
