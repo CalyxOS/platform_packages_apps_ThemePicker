@@ -21,9 +21,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.transition.Transition
@@ -39,6 +42,7 @@ import com.android.wallpaper.picker.AppbarFragment
 class KeyguardQuickAffordancePickerFragment : AppbarFragment() {
     companion object {
         const val DESTINATION_ID = "quick_affordances"
+
         @JvmStatic
         fun newInstance(): KeyguardQuickAffordancePickerFragment {
             return KeyguardQuickAffordancePickerFragment()
@@ -56,18 +60,15 @@ class KeyguardQuickAffordancePickerFragment : AppbarFragment() {
                 container,
                 false,
             )
-        setUpToolbar(view)
-
-        // For nav bar edge-to-edge effect.
-        view.setOnApplyWindowInsetsListener { v: View, windowInsets: WindowInsets ->
-            v.setPadding(
-                v.paddingLeft,
-                v.paddingTop,
-                v.paddingRight,
-                windowInsets.systemWindowInsetBottom
-            )
-            windowInsets
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updateLayoutParams<MarginLayoutParams> {
+                topMargin = insets.top
+                bottomMargin = insets.bottom
+            }
+            WindowInsetsCompat.CONSUMED
         }
+        setUpToolbar(view)
 
         val injector = InjectorProvider.getInjector() as ThemePickerInjector
         val viewModel: KeyguardQuickAffordancePickerViewModel =
