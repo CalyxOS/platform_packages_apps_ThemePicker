@@ -1,6 +1,5 @@
 package com.android.customization.picker.clock.ui
 
-import android.content.res.Resources
 import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import com.android.customization.picker.clock.data.repository.FakeClockPickerRepository
@@ -9,6 +8,7 @@ import com.android.systemui.plugins.clocks.ClockConfig
 import com.android.systemui.plugins.clocks.ClockController
 import com.android.systemui.plugins.clocks.ClockEvents
 import com.android.systemui.plugins.clocks.ClockFaceController
+import com.android.systemui.plugins.clocks.ClockFontAxisSetting
 import java.io.PrintWriter
 import javax.inject.Inject
 
@@ -29,17 +29,13 @@ class FakeClockViewFactory @Inject constructor() : ClockViewFactory {
         override val events: ClockEvents
             get() = TODO("Not yet implemented")
 
-        override fun initialize(resources: Resources, dozeFraction: Float, foldFraction: Float) =
+        override fun initialize(isDarkTheme: Boolean, dozeFraction: Float, foldFraction: Float) =
             TODO("Not yet implemented")
 
         override fun dump(pw: PrintWriter) = TODO("Not yet implemented")
     }
 
     override fun getController(clockId: String): ClockController = clockControllers[clockId]!!
-
-    override fun setReactiveTouchInteractionEnabled(clockId: String, enable: Boolean) {
-        TODO("Not yet implemented")
-    }
 
     override fun getLargeView(clockId: String): View {
         TODO("Not yet implemented")
@@ -54,6 +50,10 @@ class FakeClockViewFactory @Inject constructor() : ClockViewFactory {
     }
 
     override fun updateColor(clockId: String, seedColor: Int?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateFontAxes(clockId: String, settings: List<ClockFontAxisSetting>) {
         TODO("Not yet implemented")
     }
 

@@ -12,26 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-package com.android.customization.picker.grid.domain.interactor
+package com.android.customization.model.grid
 
-import com.android.customization.picker.grid.data.repository.GridRepository2
-import javax.inject.Inject
-import javax.inject.Singleton
+interface ShapeGridManager {
 
-@Singleton
-class GridInteractor2
-@Inject
-constructor(
-    private val repository: GridRepository2,
-) {
-    suspend fun isGridOptionAvailable(): Boolean = repository.isGridOptionAvailable()
+    suspend fun getGridOptions(): List<GridOptionModel>?
 
-    val gridOptions = repository.gridOptions
+    suspend fun getShapeOptions(): List<ShapeOptionModel>?
 
-    val selectedGridOption = repository.selectedGridOption
-
-    suspend fun applySelectedOption(key: String) = repository.applySelectedOption(key)
+    fun applyShapeGridOption(shapeKey: String, gridKey: String): Int
 }

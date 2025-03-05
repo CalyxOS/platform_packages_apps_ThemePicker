@@ -33,16 +33,15 @@ class ColorOptionImpl(
     overlayPackages: Map<String, String?>,
     isDefault: Boolean,
     private val source: String?,
-    style: Style,
+    seedColor: Int,
+    @Style.Type style: Int,
     index: Int,
     private val previewInfo: PreviewInfo,
     val type: ColorType,
-) : ColorOption(title, overlayPackages, isDefault, style, index) {
+) : ColorOption(title, overlayPackages, isDefault, seedColor, style, index) {
 
-    class PreviewInfo(
-        @ColorInt val lightColors: IntArray,
-        @ColorInt val darkColors: IntArray,
-    ) : ColorOption.PreviewInfo {
+    class PreviewInfo(@ColorInt val lightColors: IntArray, @ColorInt val darkColors: IntArray) :
+        ColorOption.PreviewInfo {
         @ColorInt
         fun resolveColors(darkTheme: Boolean): IntArray {
             return if (darkTheme) darkColors else lightColors
@@ -78,7 +77,7 @@ class ColorOptionImpl(
         }
     }
 
-    override fun getStyleForLogging(): Int = style.toString().hashCode()
+    override fun getStyleForLogging(): Int = Style.toString(style).hashCode()
 
     class Builder {
         var title: String? = null
@@ -89,7 +88,8 @@ class ColorOptionImpl(
 
         @ColorSource var source: String? = null
         var isDefault = false
-        var style = Style.TONAL_SPOT
+        @ColorInt var seedColor = 0
+        @Style.Type var style = Style.TONAL_SPOT
         var index = 0
         var packages: MutableMap<String, String?> = HashMap()
         var type = ColorType.WALLPAPER_COLOR
@@ -100,10 +100,11 @@ class ColorOptionImpl(
                 packages,
                 isDefault,
                 source,
+                seedColor,
                 style,
                 index,
                 createPreviewInfo(),
-                type
+                type,
             )
         }
 
