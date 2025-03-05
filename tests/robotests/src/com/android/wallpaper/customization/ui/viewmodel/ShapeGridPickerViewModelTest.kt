@@ -21,11 +21,13 @@ import android.content.res.Resources
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
 import com.android.customization.model.ResourceConstants
-import com.android.customization.model.grid.FakeGridOptionsManager
-import com.android.customization.picker.grid.domain.interactor.GridInteractor2
+import com.android.customization.model.grid.FakeShapeGridManager
+import com.android.customization.picker.grid.domain.interactor.ShapeGridInteractor
 import com.android.customization.picker.grid.ui.viewmodel.GridIconViewModel
+import com.android.customization.picker.grid.ui.viewmodel.ShapeIconViewModel
 import com.android.wallpaper.picker.common.text.ui.viewmodel.Text
 import com.android.wallpaper.picker.option.ui.viewmodel.OptionItemViewModel
+import com.android.wallpaper.picker.option.ui.viewmodel.OptionItemViewModel2
 import com.android.wallpaper.testing.collectLastValue
 import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -48,12 +50,12 @@ import org.robolectric.RobolectricTestRunner
 @OptIn(ExperimentalCoroutinesApi::class)
 @SmallTest
 @RunWith(RobolectricTestRunner::class)
-class ShapeAndGridPickerViewModelTest {
+class ShapeGridPickerViewModelTest {
 
     @get:Rule var hiltRule = HiltAndroidRule(this)
     @Inject lateinit var testScope: TestScope
-    @Inject lateinit var gridOptionsManager: FakeGridOptionsManager
-    @Inject lateinit var interactor: GridInteractor2
+    @Inject lateinit var gridOptionsManager: FakeShapeGridManager
+    @Inject lateinit var interactor: ShapeGridInteractor
     @Inject @ApplicationContext lateinit var appContext: Context
 
     private val iconShapePath =
@@ -68,12 +70,12 @@ class ShapeAndGridPickerViewModelTest {
                     )
             )
 
-    private lateinit var underTest: ShapeAndGridPickerViewModel
+    private lateinit var underTest: ShapeGridPickerViewModel
 
     @Before
     fun setUp() {
         hiltRule.inject()
-        underTest = ShapeAndGridPickerViewModel(appContext, interactor, testScope.backgroundScope)
+        underTest = ShapeGridPickerViewModel(appContext, interactor, testScope.backgroundScope)
     }
 
     @After
@@ -82,11 +84,83 @@ class ShapeAndGridPickerViewModelTest {
     }
 
     @Test
+    fun selectedTabUpdates_whenClickOnGridTab() =
+        testScope.runTest {
+            val selectedTab = collectLastValue(underTest.selectedTab)
+            val tabs = collectLastValue(underTest.tabs)
+            val onGridTabClicked = tabs()?.get(1)?.onClick
+
+            assertThat(selectedTab()).isEqualTo(ShapeGridPickerViewModel.Tab.SHAPE)
+
+            onGridTabClicked?.invoke()
+
+            assertThat(selectedTab()).isEqualTo(ShapeGridPickerViewModel.Tab.GRID)
+        }
+
+    @Test
+    fun selectedShapeKey() =
+        testScope.runTest {
+            val selectedShapeKey = collectLastValue(underTest.selectedShapeKey)
+
+            assertThat(selectedShapeKey()).isEqualTo("arch")
+        }
+
+    @Test
+    fun shapeOptions() =
+        testScope.runTest {
+            val shapeOptions = collectLastValue(underTest.shapeOptions)
+
+            for (i in 0 until FakeShapeGridManager.DEFAULT_SHAPE_OPTION_LIST.size) {
+                val (expectedKey, expectedPath, expectedTitle) =
+                    with(FakeShapeGridManager.DEFAULT_SHAPE_OPTION_LIST[i]) {
+                        arrayOf(key, path, title)
+                    }
+                assertShapeItem(
+                    optionItem = shapeOptions()?.get(i),
+                    key = FakeShapeGridManager.DEFAULT_SHAPE_OPTION_LIST[i].key,
+                    payload = ShapeIconViewModel(expectedKey, expectedPath),
+                    text = Text.Loaded(expectedTitle),
+                    isTextUserVisible = true,
+                    isSelected = expectedKey == "arch",
+                    isEnabled = true,
+                )
+            }
+        }
+
+    @Test
+    fun shapeOptions_whenClickOnCircleOption() =
+        testScope.runTest {
+            val shapeOptions = collectLastValue(underTest.shapeOptions)
+            val previewingShapeKey = collectLastValue(underTest.previewingShapeKey)
+            val onCircleOptionClicked =
+                shapeOptions()?.get(4)?.onClicked?.let { collectLastValue(it) }
+            checkNotNull(onCircleOptionClicked)
+
+            onCircleOptionClicked()?.invoke()
+
+            assertThat(previewingShapeKey()).isEqualTo("circle")
+            for (i in 0 until FakeShapeGridManager.DEFAULT_SHAPE_OPTION_LIST.size) {
+                val expectedKey = FakeShapeGridManager.DEFAULT_SHAPE_OPTION_LIST[i].key
+                val expectedPath = FakeShapeGridManager.DEFAULT_SHAPE_OPTION_LIST[i].path
+                val expectedTitle = FakeShapeGridManager.DEFAULT_SHAPE_OPTION_LIST[i].title
+                assertShapeItem(
+                    optionItem = shapeOptions()?.get(i),
+                    key = expectedKey,
+                    payload = ShapeIconViewModel(expectedKey, expectedPath),
+                    text = Text.Loaded(expectedTitle),
+                    isTextUserVisible = true,
+                    isSelected = expectedKey == "circle",
+                    isEnabled = true,
+                )
+            }
+        }
+
+    @Test
     fun selectedGridOption() =
         testScope.runTest {
             val selectedGridOption = collectLastValue(underTest.selectedGridOption)
 
-            assertOptionItem(
+            assertGridItem(
                 optionItem = selectedGridOption(),
                 key = "normal",
                 payload = GridIconViewModel(5, 5, iconShapePath),
@@ -101,7 +175,7 @@ class ShapeAndGridPickerViewModelTest {
     fun selectedGridOption_shouldUpdate_afterOnApply() =
         testScope.runTest {
             val selectedGridOption = collectLastValue(underTest.selectedGridOption)
-            val optionItems = collectLastValue(underTest.optionItems)
+            val optionItems = collectLastValue(underTest.gridOptions)
             val onApply = collectLastValue(underTest.onApply)
             val onPracticalOptionClick =
                 optionItems()?.get(1)?.onClicked?.let { collectLastValue(it) }
@@ -110,7 +184,7 @@ class ShapeAndGridPickerViewModelTest {
             onPracticalOptionClick()?.invoke()
             onApply()?.invoke()
 
-            assertOptionItem(
+            assertGridItem(
                 optionItem = selectedGridOption(),
                 key = "practical",
                 payload = GridIconViewModel(4, 5, iconShapePath),
@@ -124,9 +198,9 @@ class ShapeAndGridPickerViewModelTest {
     @Test
     fun optionItems() =
         testScope.runTest {
-            val optionItems = collectLastValue(underTest.optionItems)
+            val optionItems = collectLastValue(underTest.gridOptions)
 
-            assertOptionItem(
+            assertGridItem(
                 optionItem = optionItems()?.get(0),
                 key = "normal",
                 payload = GridIconViewModel(5, 5, iconShapePath),
@@ -135,7 +209,7 @@ class ShapeAndGridPickerViewModelTest {
                 isSelected = true,
                 isEnabled = true,
             )
-            assertOptionItem(
+            assertGridItem(
                 optionItem = optionItems()?.get(1),
                 key = "practical",
                 payload = GridIconViewModel(4, 5, iconShapePath),
@@ -149,14 +223,14 @@ class ShapeAndGridPickerViewModelTest {
     @Test
     fun optionItems_whenClickOnPracticalOption() =
         testScope.runTest {
-            val optionItems = collectLastValue(underTest.optionItems)
+            val optionItems = collectLastValue(underTest.gridOptions)
             val onPracticalOptionClick =
                 optionItems()?.get(1)?.onClicked?.let { collectLastValue(it) }
             checkNotNull(onPracticalOptionClick)
 
             onPracticalOptionClick()?.invoke()
 
-            assertOptionItem(
+            assertGridItem(
                 optionItem = optionItems()?.get(0),
                 key = "normal",
                 payload = GridIconViewModel(5, 5, iconShapePath),
@@ -165,7 +239,7 @@ class ShapeAndGridPickerViewModelTest {
                 isSelected = false,
                 isEnabled = true,
             )
-            assertOptionItem(
+            assertGridItem(
                 optionItem = optionItems()?.get(1),
                 key = "practical",
                 payload = GridIconViewModel(4, 5, iconShapePath),
@@ -176,8 +250,26 @@ class ShapeAndGridPickerViewModelTest {
             )
         }
 
-    private fun assertOptionItem(
-        optionItem: OptionItemViewModel<GridIconViewModel>?,
+    private fun TestScope.assertShapeItem(
+        optionItem: OptionItemViewModel<ShapeIconViewModel>?,
+        key: String,
+        payload: ShapeIconViewModel?,
+        text: Text,
+        isTextUserVisible: Boolean,
+        isSelected: Boolean,
+        isEnabled: Boolean,
+    ) {
+        checkNotNull(optionItem)
+        assertThat(collectLastValue(optionItem.key)()).isEqualTo(key)
+        assertThat(optionItem.text).isEqualTo(text)
+        assertThat(optionItem.payload).isEqualTo(payload)
+        assertThat(optionItem.isTextUserVisible).isEqualTo(isTextUserVisible)
+        assertThat(collectLastValue(optionItem.isSelected)()).isEqualTo(isSelected)
+        assertThat(optionItem.isEnabled).isEqualTo(isEnabled)
+    }
+
+    private fun TestScope.assertGridItem(
+        optionItem: OptionItemViewModel2<GridIconViewModel>?,
         key: String,
         payload: GridIconViewModel?,
         text: Text,
@@ -186,11 +278,11 @@ class ShapeAndGridPickerViewModelTest {
         isEnabled: Boolean,
     ) {
         checkNotNull(optionItem)
-        assertThat(optionItem.key.value).isEqualTo(key)
+        assertThat(collectLastValue(optionItem.key)()).isEqualTo(key)
         assertThat(optionItem.text).isEqualTo(text)
         assertThat(optionItem.payload).isEqualTo(payload)
         assertThat(optionItem.isTextUserVisible).isEqualTo(isTextUserVisible)
-        assertThat(optionItem.isSelected.value).isEqualTo(isSelected)
+        assertThat(collectLastValue(optionItem.isSelected)()).isEqualTo(isSelected)
         assertThat(optionItem.isEnabled).isEqualTo(isEnabled)
     }
 }

@@ -20,26 +20,31 @@ import android.content.Context
 import com.android.customization.model.color.ColorOptionImpl
 import com.android.customization.module.logging.ThemesUserEventLogger
 import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor
+import com.android.customization.picker.color.shared.model.ColorOptionModel
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.customization.picker.color.ui.viewmodel.ColorOptionIconViewModel
 import com.android.themepicker.R
 import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
 import com.android.wallpaper.picker.common.text.ui.viewmodel.Text
 import com.android.wallpaper.picker.customization.ui.viewmodel.FloatingToolbarTabViewModel
-import com.android.wallpaper.picker.option.ui.viewmodel.OptionItemViewModel
+import com.android.wallpaper.picker.option.ui.viewmodel.OptionItemViewModel2
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
+import kotlin.coroutines.resume
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 /** Models UI state for a color picker experience. */
 class ColorPickerViewModel2
@@ -51,14 +56,17 @@ constructor(
     @Assisted private val viewModelScope: CoroutineScope,
 ) {
 
+    private val overridingColorOption = MutableStateFlow<ColorOptionModel?>(null)
+    val previewingColorOption = overridingColorOption.asStateFlow()
+
     private val selectedColorTypeTabId = MutableStateFlow<ColorType?>(null)
+    private var onApplyContinuation: CancellableContinuation<Unit>? = null
 
     /** View-models for each color tab. */
     val colorTypeTabs: Flow<List<FloatingToolbarTabViewModel>> =
-        combine(
-            interactor.colorOptions,
-            selectedColorTypeTabId,
-        ) { colorOptions, selectedColorTypeIdOrNull ->
+        combine(interactor.colorOptions, selectedColorTypeTabId) {
+            colorOptions,
+            selectedColorTypeIdOrNull ->
             colorOptions.keys.mapIndexed { index, colorType ->
                 val isSelected =
                     (selectedColorTypeIdOrNull == null && index == 0) ||
@@ -105,7 +113,7 @@ constructor(
 
     /** The list of all color options mapped by their color type */
     private val allColorOptions:
-        Flow<Map<ColorType, List<OptionItemViewModel<ColorOptionIconViewModel>>>> =
+        Flow<Map<ColorType, List<OptionItemViewModel2<ColorOptionIconViewModel>>>> =
         interactor.colorOptions.map { colorOptions ->
             colorOptions
                 .map { colorOptionEntry ->
@@ -118,13 +126,13 @@ constructor(
                             val darkThemeColors =
                                 colorOption.previewInfo.resolveColors(/* darkTheme= */ true)
                             val isSelectedFlow: StateFlow<Boolean> =
-                                interactor.selectingColorOption
+                                previewingColorOption
                                     .map {
                                         it?.colorOption?.isEquivalent(colorOptionModel.colorOption)
                                             ?: colorOptionModel.isSelected
                                     }
                                     .stateIn(viewModelScope)
-                            OptionItemViewModel<ColorOptionIconViewModel>(
+                            OptionItemViewModel2<ColorOptionIconViewModel>(
                                 key = MutableStateFlow(colorOptionModel.key) as StateFlow<String>,
                                 payload =
                                     ColorOptionIconViewModel(
@@ -150,15 +158,7 @@ constructor(
                                         } else {
                                             {
                                                 viewModelScope.launch {
-                                                    interactor.select(colorOptionModel)
-                                                    logger.logThemeColorApplied(
-                                                        colorOptionModel.colorOption
-                                                            .sourceForLogging,
-                                                        colorOptionModel.colorOption
-                                                            .styleForLogging,
-                                                        colorOptionModel.colorOption
-                                                            .seedColorForLogging,
-                                                    )
+                                                    overridingColorOption.value = colorOptionModel
                                                 }
                                             }
                                         }
@@ -169,10 +169,48 @@ constructor(
                 .toMap()
         }
 
+    /**
+     * This function suspends until onApplyComplete is called to accommodate for configuration
+     * change updates, which are applied with a latency.
+     */
+    val onApply: Flow<(suspend () -> Unit)?> =
+        previewingColorOption.map { previewingColorOption ->
+            previewingColorOption?.let {
+                if (it.isSelected) {
+                    null
+                } else {
+                    {
+                        interactor.select(it)
+                        // Suspend until onApplyComplete is called, e.g. on configuration change
+                        suspendCancellableCoroutine { continuation: CancellableContinuation<Unit> ->
+                            onApplyContinuation?.cancel()
+                            onApplyContinuation = continuation
+                            continuation.invokeOnCancellation { onApplyContinuation = null }
+                        }
+                        logger.logThemeColorApplied(
+                            previewingColorOption.colorOption.sourceForLogging,
+                            previewingColorOption.colorOption.styleForLogging,
+                            previewingColorOption.colorOption.seedColor,
+                        )
+                    }
+                }
+            }
+        }
+
+    fun resetPreview() {
+        overridingColorOption.value = null
+    }
+
+    /** Resumes the onApply function if apply is in progress, otherwise no-op */
+    fun onApplyComplete() {
+        onApplyContinuation?.resume(Unit)
+        onApplyContinuation = null
+    }
+
     /** The list of all available color options for the selected Color Type. */
-    val colorOptions: Flow<List<OptionItemViewModel<ColorOptionIconViewModel>>> =
+    val colorOptions: Flow<List<OptionItemViewModel2<ColorOptionIconViewModel>>> =
         combine(allColorOptions, selectedColorTypeTabId) {
-            allColorOptions: Map<ColorType, List<OptionItemViewModel<ColorOptionIconViewModel>>>,
+            allColorOptions: Map<ColorType, List<OptionItemViewModel2<ColorOptionIconViewModel>>>,
             selectedColorTypeIdOrNull ->
             val selectedColorTypeId = selectedColorTypeIdOrNull ?: ColorType.WALLPAPER_COLOR
             allColorOptions[selectedColorTypeId]!!

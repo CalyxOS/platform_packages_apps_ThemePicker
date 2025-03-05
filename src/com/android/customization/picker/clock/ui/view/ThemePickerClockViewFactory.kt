@@ -26,9 +26,10 @@ import androidx.annotation.ColorInt
 import androidx.lifecycle.LifecycleOwner
 import com.android.internal.policy.SystemBarUtils
 import com.android.systemui.plugins.clocks.ClockController
+import com.android.systemui.plugins.clocks.ClockFontAxisSetting
 import com.android.systemui.plugins.clocks.WeatherData
+import com.android.systemui.shared.Flags
 import com.android.systemui.shared.clocks.ClockRegistry
-import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.util.ScreenSizeCalculator
 import com.android.wallpaper.util.TimeUtils.TimeTicker
 import java.util.concurrent.ConcurrentHashMap
@@ -64,6 +65,7 @@ constructor(
      * configs, e.g. animation state, might change during the reuse of the clock view in the app.
      */
     override fun getLargeView(clockId: String): View {
+        assert(!Flags.newCustomizationPickerUi())
         return getController(clockId).largeClock.let {
             it.animations.onPickerCarouselSwiping(1F)
             it.view
@@ -75,8 +77,12 @@ constructor(
      * configs, e.g. translation X, might change during the reuse of the clock view in the app.
      */
     override fun getSmallView(clockId: String): View {
+        assert(!Flags.newCustomizationPickerUi())
         val smallClockFrame =
-            smallClockFrames[clockId]
+            smallClockFrames[clockId]?.apply {
+                (layoutParams as FrameLayout.LayoutParams).topMargin = getSmallClockTopMargin()
+                (layoutParams as FrameLayout.LayoutParams).marginStart = getSmallClockStartPadding()
+            }
                 ?: createSmallClockFrame().also {
                     it.addView(getController(clockId).smallClock.view)
                     smallClockFrames[clockId] = it
@@ -84,14 +90,6 @@ constructor(
         smallClockFrame.translationX = 0F
         smallClockFrame.translationY = 0F
         return smallClockFrame
-    }
-
-    /** Enables or disables the reactive swipe interaction */
-    override fun setReactiveTouchInteractionEnabled(clockId: String, enable: Boolean) {
-        check(BaseFlags.get().isClockReactiveVariantsEnabled()) {
-            "isClockReactiveVariantsEnabled is disabled"
-        }
-        getController(clockId).events.isReactiveTouchInteractionEnabled = enable
     }
 
     private fun createSmallClockFrame(): FrameLayout {
@@ -119,21 +117,34 @@ constructor(
     private fun getSmallClockStartPadding() =
         appContext.resources.getDimensionPixelSize(
             com.android.systemui.customization.R.dimen.clock_padding_start
-        )
+        ) +
+            appContext.resources.getDimensionPixelSize(
+                com.android.systemui.customization.R.dimen.status_view_margin_horizontal
+            )
 
     override fun updateColorForAllClocks(@ColorInt seedColor: Int?) {
-        clockControllers.values.forEach { it.events.onSeedColorChanged(seedColor = seedColor) }
+        clockControllers.values.forEach {
+            it.largeClock.run { events.onThemeChanged(theme.copy(seedColor = seedColor)) }
+            it.smallClock.run { events.onThemeChanged(theme.copy(seedColor = seedColor)) }
+        }
     }
 
     override fun updateColor(clockId: String, @ColorInt seedColor: Int?) {
-        getController(clockId).events.onSeedColorChanged(seedColor)
+        getController(clockId).let {
+            it.largeClock.run { events.onThemeChanged(theme.copy(seedColor = seedColor)) }
+            it.smallClock.run { events.onThemeChanged(theme.copy(seedColor = seedColor)) }
+        }
+    }
+
+    override fun updateFontAxes(clockId: String, settings: List<ClockFontAxisSetting>) {
+        getController(clockId).let { it.events.onFontAxesChanged(settings) }
     }
 
     override fun updateRegionDarkness() {
         val isRegionDark = isLockscreenWallpaperDark()
         clockControllers.values.forEach {
-            it.largeClock.events.onRegionDarknessChanged(isRegionDark)
-            it.smallClock.events.onRegionDarknessChanged(isRegionDark)
+            it.largeClock.run { events.onThemeChanged(theme.copy(isDarkTheme = isRegionDark)) }
+            it.smallClock.run { events.onThemeChanged(theme.copy(isDarkTheme = isRegionDark)) }
         }
     }
 
@@ -180,13 +191,12 @@ constructor(
     }
 
     private fun initClockController(clockId: String): ClockController {
+        val isWallpaperDark = isLockscreenWallpaperDark()
         val controller =
-            registry.createExampleClock(clockId).also { it?.initialize(resources, 0f, 0f) }
+            registry.createExampleClock(clockId).also { it?.initialize(isWallpaperDark, 0f, 0f) }
         checkNotNull(controller)
 
-        val isWallpaperDark = isLockscreenWallpaperDark()
         // Initialize large clock
-        controller.largeClock.events.onRegionDarknessChanged(isWallpaperDark)
         controller.largeClock.events.onFontSettingChanged(
             resources
                 .getDimensionPixelSize(
@@ -197,7 +207,6 @@ constructor(
         controller.largeClock.events.onTargetRegionChanged(getLargeClockRegion())
 
         // Initialize small clock
-        controller.smallClock.events.onRegionDarknessChanged(isWallpaperDark)
         controller.smallClock.events.onFontSettingChanged(
             resources
                 .getDimensionPixelSize(

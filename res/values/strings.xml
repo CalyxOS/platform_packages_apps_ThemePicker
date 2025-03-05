@@ -96,9 +96,23 @@
     <!-- Description of a radio button to apply clock size small. [CHAR LIMIT=NONE] -->
     <string name="clock_size_small_description">A small clock shows in the corner of your screen</string>
 
+    <!-- Description for clock font editor axis apply button. [CHAR LIMIT=NONE] -->
+    <string name="clock_font_editor_apply">Apply clock font changes</string>
+
+    <!-- Description for clock font editor axis revert button. [CHAR LIMIT=NONE] -->
+    <string name="clock_font_editor_revert">Undo clock font changes</string>
+
     <!-- Title of a section of the customization picker where the user can select a Grid size for
         the home screen. [CHAR LIMIT=15] -->
     <string name="grid_title">App grid</string>
+
+    <!-- Title of a section of the customization picker where the user can select app shapes and
+        grid layouts for the home screen. [CHAR LIMIT=32] -->
+    <string name="shape_and_grid_title">App shape &amp; layout</string>
+
+    <!-- Tab title that switch to app grid customization section, where people can customization
+        the grid layout of the apps -->
+    <string name="grid_layout">Layout</string>
 
     <!-- Label for a button that allows the user to apply the currently selected Theme.
         [CHAR LIMIT=20] -->

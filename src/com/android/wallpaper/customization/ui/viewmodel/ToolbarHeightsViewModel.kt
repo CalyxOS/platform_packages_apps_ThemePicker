@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package com.android.customization.model.grid
+package com.android.wallpaper.customization.ui.viewmodel
 
-interface GridOptionsManager2 {
-
-    suspend fun isGridOptionAvailable(): Boolean
-
-    suspend fun getGridOptions(): List<GridOptionModel>?
-
-    fun applyGridOption(gridName: String): Int
-}
+data class ToolbarHeightsViewModel(
+    val navButtonHeight: Int? = null,
+    val toolbarHeight: Int? = null,
+    val applyButtonHeight: Int? = null,
+)

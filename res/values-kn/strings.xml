@@ -43,7 +43,11 @@
     <string name="clock_size_large" msgid="3143248715744138979">"ದೊಡ್ಡದು"</string>
     <string name="clock_size_small" msgid="2280449912094164133">"ಚಿಕ್ಕದು"</string>
     <string name="clock_size_small_description" msgid="4089511196955732480">"ನಿಮ್ಮ ಸ್ಕ್ರೀನ್‌ನ ಮೂಲೆಯಲ್ಲಿ ಸಣ್ಣ ಗಡಿಯಾರವೊಂದು ಕಾಣಿಸುತ್ತದೆ"</string>
+    <string name="clock_font_editor_apply" msgid="5965611025879105293">"ಕ್ಲಾಕ್ ಫಾಂಟ್ ಬದಲಾವಣೆಗಳನ್ನು ಅನ್ವಯಿಸಿ"</string>
+    <string name="clock_font_editor_revert" msgid="5307491447405753061">"ಕ್ಲಾಕ್ ಫಾಂಟ್ ಬದಲಾವಣೆಗಳನ್ನು ರದ್ದುಗೊಳಿಸಿ"</string>
     <string name="grid_title" msgid="1688173478777254123">"ಆ್ಯಪ್ ಗ್ರಿಡ್"</string>
+    <string name="shape_and_grid_title" msgid="9092477491363761054">"ಆ್ಯಪ್ ಆಕಾರ, ಲೇಔಟ್"</string>
+    <string name="grid_layout" msgid="370175667652663686">"ಲೇಔಟ್"</string>
     <string name="apply_theme_btn" msgid="6293081192321303991">"ಅನ್ವಯಿಸಿ"</string>
     <string name="edit_custom_theme_lbl" msgid="5211377705710775224">"ಎಡಿಟ್ ಮಾಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ"</string>
     <string name="keep_my_wallpaper" msgid="8012385376769568517">"ಪ್ರಸ್ತುತ ವಾಲ್‌ಪೇಪರ್ ಅನ್ನು ಉಳಿಸಿ"</string>
@@ -90,7 +94,7 @@
     <string name="delete_custom_theme_confirmation" msgid="4452137183628769394">"ಕಸ್ಟಮ್ ಶೈಲಿಯನ್ನು ಅಳಿಸುವುದೇ?"</string>
     <string name="delete_custom_theme_button" msgid="5102462988130208824">"ಅಳಿಸಿ"</string>
     <string name="cancel" msgid="4651030493668562067">"ರದ್ದುಗೊಳಿಸಿ"</string>
-    <string name="set_theme_wallpaper_dialog_message" msgid="2179661027350908003">"ಶೈಲಿ ವಾಲ್‌ಪೇಪರ್ ಹೊಂದಿಸಿ"</string>
+    <string name="set_theme_wallpaper_dialog_message" msgid="2179661027350908003">"ಶೈಲಿ ವಾಲ್‌ಪೇಪರ್ ಸೆಟ್ ಮಾಡಿ"</string>
     <string name="use_style_instead_title" msgid="1578754995763917502">"ಬದಲಿಗೆ <xliff:g id="ID_1">%1$s</xliff:g> ಬಳಸಬೇಕೆ?"</string>
     <string name="use_style_instead_body" msgid="3051937045807471496">"ನೀವು ಆಯ್ಕೆ ಮಾಡುವ ಘಟಕಗಳು <xliff:g id="ID_1">%1$s</xliff:g> ಶೈಲಿಗೆ ಹೊಂದಿಕೆಯಾಗಬೇಕು. ಬದಲಿಗೆ ನೀವು <xliff:g id="ID_2">%1$s</xliff:g> ಬಳಸಲು ಬಯಸುವಿರಾ?"</string>
     <string name="use_style_button" msgid="1754493078383627019">"<xliff:g id="ID_1">%1$s</xliff:g> ಅನ್ನು ಬಳಸಿ"</string>

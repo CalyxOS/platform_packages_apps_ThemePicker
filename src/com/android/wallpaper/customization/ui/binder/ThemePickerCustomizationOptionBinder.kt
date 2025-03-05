@@ -16,10 +16,12 @@
 
 package com.android.wallpaper.customization.ui.binder
 
+import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
@@ -27,14 +29,18 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.android.customization.picker.clock.shared.ClockSize
-import com.android.customization.picker.clock.ui.view.ClockHostView2
+import com.android.customization.picker.clock.ui.view.ClockConstraintLayoutHostView
+import com.android.customization.picker.clock.ui.view.ClockConstraintLayoutHostView.Companion.addClockViews
 import com.android.customization.picker.clock.ui.view.ClockViewFactory
 import com.android.customization.picker.grid.ui.binder.GridIconViewBinder
+import com.android.systemui.plugins.clocks.ClockFontAxisSetting
+import com.android.systemui.plugins.clocks.ClockPreviewConfig
+import com.android.systemui.shared.Flags
 import com.android.themepicker.R
-import com.android.wallpaper.config.BaseFlags
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerHomeCustomizationOption
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerLockCustomizationOption
 import com.android.wallpaper.customization.ui.viewmodel.ThemePickerCustomizationOptionsViewModel
+import com.android.wallpaper.model.Screen
 import com.android.wallpaper.picker.common.icon.ui.viewbinder.IconViewBinder
 import com.android.wallpaper.picker.common.text.ui.viewbinder.TextViewBinder
 import com.android.wallpaper.picker.customization.ui.binder.CustomizationOptionsBinder
@@ -46,7 +52,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 @Singleton
@@ -63,6 +68,7 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
         viewModel: CustomizationPickerViewModel2,
         colorUpdateViewModel: ColorUpdateViewModel,
         lifecycleOwner: LifecycleOwner,
+        navigateToWallpaperCategoriesScreen: (screen: Screen) -> Unit,
     ) {
         defaultCustomizationOptionsBinder.bind(
             view,
@@ -72,12 +78,14 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
             viewModel,
             colorUpdateViewModel,
             lifecycleOwner,
+            navigateToWallpaperCategoriesScreen,
         )
 
         val optionClock =
             lockScreenCustomizationOptionEntries
                 .find { it.first == ThemePickerLockCustomizationOption.CLOCK }
                 ?.second
+        val optionClockIcon = optionClock?.findViewById<ImageView>(R.id.option_entry_clock_icon)
 
         val optionShortcut =
             lockScreenCustomizationOptionEntries
@@ -101,14 +109,14 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                 .find { it.first == ThemePickerHomeCustomizationOption.COLORS }
                 ?.second
 
-        val optionShapeAndGrid =
+        val optionShapeGrid =
             homeScreenCustomizationOptionEntries
-                .find { it.first == ThemePickerHomeCustomizationOption.APP_SHAPE_AND_GRID }
+                .find { it.first == ThemePickerHomeCustomizationOption.APP_SHAPE_GRID }
                 ?.second
-        val optionShapeAndGridDescription =
-            optionShapeAndGrid?.findViewById<TextView>(R.id.option_entry_app_grid_description)
-        val optionShapeAndGridIcon =
-            optionShapeAndGrid?.findViewById<ImageView>(R.id.option_entry_app_grid_icon)
+        val optionShapeGridDescription =
+            optionShapeGrid?.findViewById<TextView>(R.id.option_entry_app_shape_grid_description)
+        val optionShapeGridIcon =
+            optionShapeGrid?.findViewById<ImageView>(R.id.option_entry_app_shape_grid_icon)
 
         val optionsViewModel =
             viewModel.customizationOptionsViewModel as ThemePickerCustomizationOptionsViewModel
@@ -117,6 +125,12 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                 launch {
                     optionsViewModel.onCustomizeClockClicked.collect {
                         optionClock?.setOnClickListener { _ -> it?.invoke() }
+                    }
+                }
+
+                launch {
+                    optionsViewModel.clockPickerViewModel.selectedClock.collect {
+                        optionClockIcon?.setImageDrawable(it.thumbnail)
                     }
                 }
 
@@ -155,23 +169,21 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                 }
 
                 launch {
-                    optionsViewModel.onCustomizeShapeAndGridClicked.collect {
-                        optionShapeAndGrid?.setOnClickListener { _ -> it?.invoke() }
+                    optionsViewModel.onCustomizeShapeGridClicked.collect {
+                        optionShapeGrid?.setOnClickListener { _ -> it?.invoke() }
                     }
                 }
 
                 launch {
-                    optionsViewModel.shapeAndGridPickerViewModel.selectedGridOption.collect {
+                    optionsViewModel.shapeGridPickerViewModel.selectedGridOption.collect {
                         gridOption ->
-                        optionShapeAndGridDescription?.let {
-                            TextViewBinder.bind(it, gridOption.text)
-                        }
+                        optionShapeGridDescription?.let { TextViewBinder.bind(it, gridOption.text) }
                         gridOption.payload?.let { gridIconViewModel ->
-                            optionShapeAndGridIcon?.let {
+                            optionShapeGridIcon?.let {
                                 GridIconViewBinder.bind(view = it, viewModel = gridIconViewModel)
                             }
                             // TODO(b/363018910): Use ColorUpdateBinder to update color
-                            optionShapeAndGridIcon?.setColorFilter(
+                            optionShapeGridIcon?.setColorFilter(
                                 ContextCompat.getColor(
                                     view.context,
                                     com.android.wallpaper.R.color.system_on_surface_variant,
@@ -217,11 +229,12 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
             }
 
         customizationOptionFloatingSheetViewMap
-            ?.get(ThemePickerHomeCustomizationOption.APP_SHAPE_AND_GRID)
+            ?.get(ThemePickerHomeCustomizationOption.APP_SHAPE_GRID)
             ?.let {
-                ShapeAndGridFloatingSheetBinder.bind(
+                ShapeGridFloatingSheetBinder.bind(
                     it,
-                    optionsViewModel.shapeAndGridPickerViewModel,
+                    optionsViewModel,
+                    colorUpdateViewModel,
                     lifecycleOwner,
                     Dispatchers.IO,
                 )
@@ -229,12 +242,14 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
     }
 
     override fun bindClockPreview(
+        context: Context,
         clockHostView: View,
         viewModel: CustomizationPickerViewModel2,
+        colorUpdateViewModel: ColorUpdateViewModel,
         lifecycleOwner: LifecycleOwner,
         clockViewFactory: ClockViewFactory,
     ) {
-        clockHostView as ClockHostView2
+        clockHostView as ClockConstraintLayoutHostView
         val clockPickerViewModel =
             (viewModel.customizationOptionsViewModel as ThemePickerCustomizationOptionsViewModel)
                 .clockPickerViewModel
@@ -243,30 +258,52 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
             lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     combine(
-                            clockPickerViewModel.previewingClock.filterNotNull(),
+                            clockPickerViewModel.previewingClock,
                             clockPickerViewModel.previewingClockSize,
                         ) { clock, size ->
                             clock to size
                         }
                         .collect { (clock, size) ->
                             clockHostView.removeAllViews()
-                            if (BaseFlags.get().isClockReactiveVariantsEnabled()) {
-                                clockViewFactory.setReactiveTouchInteractionEnabled(
-                                    clock.clockId,
-                                    true,
-                                )
-                            }
-                            val clockView =
-                                when (size) {
-                                    ClockSize.DYNAMIC ->
-                                        clockViewFactory.getLargeView(clock.clockId)
-                                    ClockSize.SMALL -> clockViewFactory.getSmallView(clock.clockId)
+                            // For new customization picker, we should get views from clocklayout
+                            if (Flags.newCustomizationPickerUi()) {
+                                clockViewFactory.getController(clock.clockId).let { clockController
+                                    ->
+                                    addClockViews(clockController, clockHostView, size)
+                                    val cs = ConstraintSet()
+                                    // TODO(b/379348167): get correct isShadeLayoutWide from picker
+                                    clockController.largeClock.layout.applyPreviewConstraints(
+                                        ClockPreviewConfig(
+                                            previewContext = context,
+                                            isShadeLayoutWide = false,
+                                            isSceneContainerFlagEnabled = false,
+                                        ),
+                                        cs,
+                                    )
+                                    clockController.smallClock.layout.applyPreviewConstraints(
+                                        ClockPreviewConfig(
+                                            previewContext = context,
+                                            isShadeLayoutWide = false,
+                                            isSceneContainerFlagEnabled = false,
+                                        ),
+                                        cs,
+                                    )
+                                    cs.applyTo(clockHostView)
                                 }
-                            // The clock view might still be attached to an existing parent. Detach
-                            // before adding to another parent.
-                            (clockView.parent as? ViewGroup)?.removeView(clockView)
-                            clockHostView.addView(clockView)
-                            clockHostView.clockSize = size
+                            } else {
+                                val clockView =
+                                    when (size) {
+                                        ClockSize.DYNAMIC ->
+                                            clockViewFactory.getLargeView(clock.clockId)
+                                        ClockSize.SMALL ->
+                                            clockViewFactory.getSmallView(clock.clockId)
+                                    }
+                                // The clock view might still be attached to an existing parent.
+                                // Detach
+                                // before adding to another parent.
+                                (clockView.parent as? ViewGroup)?.removeView(clockView)
+                                clockHostView.addView(clockView)
+                            }
                         }
                 }
 
@@ -274,14 +311,20 @@ constructor(private val defaultCustomizationOptionsBinder: DefaultCustomizationO
                     combine(
                             clockPickerViewModel.previewingSeedColor,
                             clockPickerViewModel.previewingClock,
-                        ) { color, clock ->
-                            color to clock
-                        }
-                        .collect { (color, clock) ->
+                            clockPickerViewModel.previewingClockFontAxisMap,
+                            colorUpdateViewModel.systemColorsUpdated,
+                            ::Quadruple,
+                        )
+                        .collect { quadruple ->
+                            val (color, clock, axisMap, _) = quadruple
                             clockViewFactory.updateColor(clock.clockId, color)
+                            val axisList = axisMap.map { ClockFontAxisSetting(it.key, it.value) }
+                            clockViewFactory.updateFontAxes(clock.clockId, axisList)
                         }
                 }
             }
         }
     }
+
+    data class Quadruple<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)
 }
