@@ -31,6 +31,8 @@ import com.android.customization.picker.color.domain.interactor.ColorPickerInter
 import com.android.customization.picker.color.shared.model.ColorOptionModel
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.customization.picker.color.ui.viewmodel.ColorOptionIconViewModel
+import com.android.systemui.monet.ColorScheme
+import com.android.systemui.monet.Style
 import com.android.themepicker.R
 import com.android.wallpaper.picker.common.text.ui.viewmodel.Text
 import com.android.wallpaper.picker.option.ui.viewmodel.OptionItemViewModel
@@ -140,6 +142,16 @@ private constructor(
                 }
 
                 colorMap.values.forEachIndexed { index, colorModel ->
+                    // Adjust clock colors for light theme for better color contrast
+                    val lightThemeColor =
+                        ColorScheme(
+                                /* seed= */ colorModel.color,
+                                /* darkTheme= */ false,
+                                /* style= */ if (colorModel.colorId == "GRAY") Style.MONOCHROMATIC
+                                else Style.RAINBOW,
+                            )
+                            .accent1
+                            .getAtTone(450f)
                     val isSelectedFlow =
                         selectedColorId
                             .map { colorMap.keys.indexOf(it) == index }
@@ -150,10 +162,10 @@ private constructor(
                             key = MutableStateFlow(colorModel.colorId) as StateFlow<String>,
                             payload =
                                 ColorOptionIconViewModel(
-                                    lightThemeColor0 = colorModel.color,
-                                    lightThemeColor1 = colorModel.color,
-                                    lightThemeColor2 = colorModel.color,
-                                    lightThemeColor3 = colorModel.color,
+                                    lightThemeColor0 = lightThemeColor,
+                                    lightThemeColor1 = lightThemeColor,
+                                    lightThemeColor2 = lightThemeColor,
+                                    lightThemeColor3 = lightThemeColor,
                                     darkThemeColor0 = colorModel.color,
                                     darkThemeColor1 = colorModel.color,
                                     darkThemeColor2 = colorModel.color,
@@ -161,10 +173,11 @@ private constructor(
                                 ),
                             text =
                                 Text.Loaded(
-                                    context.getString(
-                                        R.string.content_description_color_option,
-                                        index,
-                                    )
+                                    colorModel.colorName
+                                        ?: context.getString(
+                                            R.string.content_description_color_option,
+                                            index,
+                                        )
                                 ),
                             isTextUserVisible = false,
                             isSelected = isSelectedFlow,
@@ -180,7 +193,7 @@ private constructor(
                                                         color = colorModel.color,
                                                         colorTone =
                                                             colorModel.getColorTone(
-                                                                colorToneProgress,
+                                                                colorToneProgress
                                                             ),
                                                     )
                                                 clockPickerInteractor.setClockColor(
@@ -282,7 +295,7 @@ private constructor(
                             null
                         } else {
                             { _selectedTabPosition.tryEmit(Tab.COLOR) }
-                        }
+                        },
                 ),
                 ClockSettingsTabViewModel(
                     name = context.resources.getString(R.string.clock_size),
@@ -292,7 +305,7 @@ private constructor(
                             null
                         } else {
                             { _selectedTabPosition.tryEmit(Tab.SIZE) }
-                        }
+                        },
                 ),
             )
         }
@@ -302,11 +315,7 @@ private constructor(
 
         fun blendColorWithTone(color: Int, colorTone: Double): Int {
             ColorUtils.colorToLAB(color, helperColorLab)
-            return ColorUtils.LABToColor(
-                colorTone,
-                helperColorLab[1],
-                helperColorLab[2],
-            )
+            return ColorUtils.LABToColor(colorTone, helperColorLab[1], helperColorLab[2])
         }
 
         const val COLOR_OPTIONS_EVENT_UPDATE_DELAY_MILLIS: Long = 100

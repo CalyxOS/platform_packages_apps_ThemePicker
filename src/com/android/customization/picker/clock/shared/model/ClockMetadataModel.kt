@@ -20,7 +20,7 @@ package com.android.customization.picker.clock.shared.model
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.IntRange
-import com.android.systemui.plugins.clocks.ClockFontAxis
+import com.android.systemui.plugins.clocks.AxisPresetConfig
 
 /** Model for clock metadata. */
 data class ClockMetadataModel(
@@ -29,12 +29,14 @@ data class ClockMetadataModel(
     val description: String,
     val thumbnail: Drawable,
     val isReactiveToTone: Boolean,
-    val fontAxes: List<ClockFontAxis>,
+    val axisPresetConfig: AxisPresetConfig?, // Null indicates the preset list should be disabled.
     val selectedColorId: String?,
     @IntRange(from = 0, to = 100) val colorToneProgress: Int,
     @ColorInt val seedColor: Int?,
 ) {
     companion object {
+        const val MIN_COLOR_TONE_PROGRESS = 0
+        const val MAX_COLOR_TONE_PROGRESS = 100
         const val DEFAULT_COLOR_TONE_PROGRESS = 75
     }
 }

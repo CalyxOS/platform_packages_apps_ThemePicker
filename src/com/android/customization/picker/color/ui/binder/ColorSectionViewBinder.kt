@@ -66,7 +66,7 @@ object ColorSectionViewBinder {
                 optionContainer.paddingLeft,
                 16,
                 optionContainer.paddingRight,
-                16
+                16,
             )
         } else {
             moreColorsButton.isVisible = false
@@ -77,7 +77,7 @@ object ColorSectionViewBinder {
                 optionContainer.paddingLeft,
                 20,
                 optionContainer.paddingRight,
-                20
+                20,
             )
         }
         lifecycleOwner.lifecycleScope.launch {
@@ -129,11 +129,14 @@ object ColorSectionViewBinder {
                 )
             }
             val optionSelectedView = itemView.requireViewById<ImageView>(R.id.option_selected)
+            itemView.isClickable = true
+            itemView.isFocusable = true
 
             lifecycleOwner.lifecycleScope.launch {
                 launch {
                     item.isSelected.collect { isSelected ->
                         optionSelectedView.isVisible = isSelected
+                        itemView.isSelected = isSelected
                     }
                 }
                 launch {

@@ -16,12 +16,13 @@
 
 package com.android.wallpaper.customization.ui.viewmodel
 
-import com.android.customization.picker.clock.shared.ClockSize
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
+import com.android.customization.picker.settings.domain.interactor.ColorContrastSectionInteractor
+import dagger.hilt.android.scopes.ViewModelScoped
+import javax.inject.Inject
 
-data class ClockSizeOptionViewModel(
-    val size: ClockSize,
-    val isSelected: StateFlow<Boolean>,
-    val onClicked: Flow<(() -> Unit)?>,
-)
+@ViewModelScoped
+class ColorContrastSectionViewModel2
+@Inject
+constructor(colorContrastSectionInteractor: ColorContrastSectionInteractor) {
+    val contrast = colorContrastSectionInteractor.contrast
+}

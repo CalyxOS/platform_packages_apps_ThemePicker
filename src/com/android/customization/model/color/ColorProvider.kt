@@ -117,18 +117,21 @@ class ColorProvider(private val context: Context, stubPackageName: String) :
         }
 
         scope.launch {
+            // Wait for the previous preset color loading job to finish before evaluating whether to
+            // start a new one
             loaderJob?.join()
             if (presetColorBundles == null || reload) {
-                try {
-                    loaderJob = launch { loadPreset() }
-                } catch (e: Throwable) {
-                    colorsAvailable = false
-                    callback?.onError(e)
-                    return@launch
+                loaderJob = launch {
+                    try {
+                        loadPreset(isNewPickerUi)
+                        callback?.onOptionsLoaded(buildFinalList(isNewPickerUi))
+                    } catch (e: Throwable) {
+                        colorsAvailable = false
+                        callback?.onError(e)
+                    }
                 }
-                callback?.onOptionsLoaded(buildFinalList())
             } else {
-                callback?.onOptionsLoaded(buildFinalList())
+                callback?.onOptionsLoaded(buildFinalList(isNewPickerUi))
             }
         }
     }
@@ -236,8 +239,8 @@ class ColorProvider(private val context: Context, stubPackageName: String) :
     }
 
     /**
-     * Returns the light theme version of the Revamped UI preview of a ColorScheme based on this
-     * order: top left, top right, bottom left, bottom right
+     * Returns the light theme preview of a dynamic ColorScheme based on this order: top left, top
+     * right, bottom left, bottom right
      *
      * This color mapping corresponds to GM3 colors: Primary (light), Primary (light), Secondary
      * LStar 85, and Tertiary LStar 70
@@ -253,8 +256,8 @@ class ColorProvider(private val context: Context, stubPackageName: String) :
     }
 
     /**
-     * Returns the dark theme version of the Revamped UI preview of a ColorScheme based on this
-     * order: top left, top right, bottom left, bottom right
+     * Returns the dark theme preview of a dynamic ColorScheme based on this order: top left, top
+     * right, bottom left, bottom right
      *
      * This color mapping corresponds to GM3 colors: Primary (dark), Primary (dark), Secondary LStar
      * 35, and Tertiary LStar 70
@@ -270,8 +273,8 @@ class ColorProvider(private val context: Context, stubPackageName: String) :
     }
 
     /**
-     * Returns the light theme version of the Revamped UI preview of a ColorScheme based on this
-     * order: top left, top right, bottom left, bottom right
+     * Returns the light theme preview of a monochrome ColorScheme based on this order: top left,
+     * top right, bottom left, bottom right
      *
      * This color mapping corresponds to GM3 colors: Primary LStar 0, Primary LStar 0, Secondary
      * LStar 85, and Tertiary LStar 70
@@ -287,8 +290,8 @@ class ColorProvider(private val context: Context, stubPackageName: String) :
     }
 
     /**
-     * Returns the dark theme version of the Revamped UI preview of a ColorScheme based on this
-     * order: top left, top right, bottom left, bottom right
+     * Returns the dark theme preview of a monochrome ColorScheme based on this order: top left, top
+     * right, bottom left, bottom right
      *
      * This color mapping corresponds to GM3 colors: Primary LStar 99, Primary LStar 99, Secondary
      * LStar 35, and Tertiary LStar 70
@@ -304,21 +307,54 @@ class ColorProvider(private val context: Context, stubPackageName: String) :
     }
 
     /**
-     * Returns the Revamped UI preview of a preset ColorScheme based on this order: top left, top
-     * right, bottom left, bottom right
+     * Returns the light theme contrast-adjusted preview of a preset ColorScheme, based on this
+     * order: top left, top right, bottom left, bottom right
      */
-    private fun getPresetColorPreview(colorScheme: ColorScheme, seed: Int): IntArray {
+    private fun getDarkPresetColorPreview(colorScheme: ColorScheme): IntArray {
         val colors =
             when (colorScheme.style) {
-                Style.FRUIT_SALAD -> intArrayOf(seed, colorScheme.accent1.s200)
-                Style.TONAL_SPOT -> intArrayOf(colorScheme.accentColor, colorScheme.accentColor)
-                Style.RAINBOW -> intArrayOf(colorScheme.accent1.s200, colorScheme.accent1.s200)
-                else -> intArrayOf(colorScheme.accent1.s100, colorScheme.accent1.s100)
+                Style.FRUIT_SALAD -> intArrayOf(colorScheme.accent3.s100, colorScheme.accent1.s200)
+                else -> intArrayOf(colorScheme.accent1.s200, colorScheme.accent1.s200)
             }
         return intArrayOf(colors[0], colors[1], colors[0], colors[1])
     }
 
-    private suspend fun loadPreset() =
+    /**
+     * Returns the preview of a preset ColorScheme based on this order: top left, top right, bottom
+     * left, bottom right
+     */
+    private fun getFixedPresetColorPreview(colorScheme: ColorScheme, seed: Int): IntArray {
+        val colors =
+            when (colorScheme.style) {
+                Style.FRUIT_SALAD -> intArrayOf(colorScheme.accent3.s100, colorScheme.accent1.s200)
+                Style.RAINBOW -> intArrayOf(colorScheme.accent1.s200, colorScheme.accent1.s200)
+                else -> intArrayOf(seed, seed)
+            }
+        return intArrayOf(colors[0], colors[1], colors[0], colors[1])
+    }
+
+    /**
+     * Returns the light theme contrast-adjusted preview of a preset ColorScheme, based on this
+     * order: top left, top right, bottom left, bottom right
+     */
+    private fun getLightPresetColorPreview(colorScheme: ColorScheme): IntArray {
+        val colors =
+            when (colorScheme.style) {
+                Style.FRUIT_SALAD ->
+                    intArrayOf(
+                        colorScheme.accent3.getAtTone(450f),
+                        colorScheme.accent1.getAtTone(550f),
+                    )
+                else ->
+                    intArrayOf(
+                        colorScheme.accent1.getAtTone(450f),
+                        colorScheme.accent1.getAtTone(450f),
+                    )
+            }
+        return intArrayOf(colors[0], colors[1], colors[0], colors[1])
+    }
+
+    private suspend fun loadPreset(isNewPickerUi: Boolean) =
         withContext(Dispatchers.IO) {
             val bundles: MutableList<ColorOption> = ArrayList()
 
@@ -358,9 +394,23 @@ class ColorProvider(private val context: Context, stubPackageName: String) :
                         hasMonochrome = true
                         monochromeBundleName = bundleName
                     }
-                    bundles.add(buildPreset(bundleName, index, style))
+                    bundles.add(
+                        buildPreset(
+                            bundleName = bundleName,
+                            index = index,
+                            style = style,
+                            isNewPickerUi = isNewPickerUi,
+                        )
+                    )
                 } else {
-                    bundles.add(buildPreset(bundleName, index, null))
+                    bundles.add(
+                        buildPreset(
+                            bundleName = bundleName,
+                            index = index,
+                            style = null,
+                            isNewPickerUi = isNewPickerUi,
+                        )
+                    )
                 }
 
                 index++
@@ -378,6 +428,7 @@ class ColorProvider(private val context: Context, stubPackageName: String) :
         index: Int,
         @Style.Type style: Int? = null,
         type: ColorType = ColorType.PRESET_COLOR,
+        isNewPickerUi: Boolean,
     ): ColorOptionImpl {
         val builder = ColorOptionImpl.Builder()
         builder.title = getItemStringFromStub(COLOR_BUNDLE_NAME_PREFIX, bundleName)
@@ -406,8 +457,18 @@ class ColorProvider(private val context: Context, stubPackageName: String) :
                     lightColors = getLightMonochromePreview(lightColorScheme)
                 }
                 else -> {
-                    darkColors = getPresetColorPreview(darkColorScheme, colorFromStub)
-                    lightColors = getPresetColorPreview(lightColorScheme, colorFromStub)
+                    darkColors =
+                        if (isNewPickerUi) {
+                            getFixedPresetColorPreview(darkColorScheme, colorFromStub)
+                        } else {
+                            getDarkPresetColorPreview(darkColorScheme)
+                        }
+                    lightColors =
+                        if (isNewPickerUi) {
+                            getFixedPresetColorPreview(lightColorScheme, colorFromStub)
+                        } else {
+                            getLightPresetColorPreview(lightColorScheme)
+                        }
                 }
             }
         }
@@ -416,7 +477,7 @@ class ColorProvider(private val context: Context, stubPackageName: String) :
         return builder.build()
     }
 
-    private fun buildFinalList(): List<ColorOption> {
+    private fun buildFinalList(isNewPickerUi: Boolean): List<ColorOption> {
         val presetColors = presetColorBundles ?: emptyList()
         val wallpaperColors = wallpaperColorBundles?.toMutableList() ?: mutableListOf()
         // Insert monochrome in the second position if it is enabled and included in preset
@@ -426,7 +487,13 @@ class ColorProvider(private val context: Context, stubPackageName: String) :
                 if (wallpaperColors.isNotEmpty()) {
                     wallpaperColors.add(
                         1,
-                        buildPreset(it, -1, Style.MONOCHROMATIC, ColorType.WALLPAPER_COLOR),
+                        buildPreset(
+                            bundleName = it,
+                            index = -1,
+                            style = Style.MONOCHROMATIC,
+                            type = ColorType.WALLPAPER_COLOR,
+                            isNewPickerUi = isNewPickerUi,
+                        ),
                     )
                 }
             }

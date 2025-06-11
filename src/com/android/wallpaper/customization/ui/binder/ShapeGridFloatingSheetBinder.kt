@@ -18,10 +18,12 @@ package com.android.wallpaper.customization.ui.binder
 
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.ImageView
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -30,8 +32,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.customization.picker.common.ui.view.SingleRowListItemSpacing
-import com.android.customization.picker.grid.ui.binder.GridIconViewBinder
-import com.android.customization.picker.grid.ui.viewmodel.GridIconViewModel
 import com.android.customization.picker.grid.ui.viewmodel.ShapeIconViewModel
 import com.android.themepicker.R
 import com.android.wallpaper.customization.ui.util.ThemePickerCustomizationOptionUtil.ThemePickerHomeCustomizationOption.APP_SHAPE_GRID
@@ -39,12 +39,11 @@ import com.android.wallpaper.customization.ui.viewmodel.ShapeGridFloatingSheetHe
 import com.android.wallpaper.customization.ui.viewmodel.ShapeGridPickerViewModel.Tab.GRID
 import com.android.wallpaper.customization.ui.viewmodel.ShapeGridPickerViewModel.Tab.SHAPE
 import com.android.wallpaper.customization.ui.viewmodel.ThemePickerCustomizationOptionsViewModel
+import com.android.wallpaper.picker.customization.ui.binder.ColorUpdateBinder
 import com.android.wallpaper.picker.customization.ui.view.FloatingToolbar
 import com.android.wallpaper.picker.customization.ui.view.adapter.FloatingToolbarTabAdapter
 import com.android.wallpaper.picker.customization.ui.viewmodel.ColorUpdateViewModel
-import com.android.wallpaper.picker.option.ui.adapter.OptionItemAdapter
 import com.android.wallpaper.picker.option.ui.adapter.OptionItemAdapter2
-import com.android.wallpaper.picker.option.ui.binder.OptionItemBinder
 import java.lang.ref.WeakReference
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -76,21 +75,48 @@ object ShapeGridFloatingSheetBinder {
         val floatingSheetContentVerticalPadding =
             view.resources.getDimensionPixelSize(R.dimen.floating_sheet_content_vertical_padding)
         val viewModel = optionsViewModel.shapeGridPickerViewModel
+        val isFloatingSheetActive = { optionsViewModel.selectedOption.value == APP_SHAPE_GRID }
 
         val tabs = view.requireViewById<FloatingToolbar>(R.id.floating_toolbar)
+        val tabContainer =
+            tabs.findViewById<ViewGroup>(com.android.wallpaper.R.id.floating_toolbar_tab_container)
+        ColorUpdateBinder.bind(
+            setColor = { color ->
+                DrawableCompat.setTint(DrawableCompat.wrap(tabContainer.background), color)
+            },
+            color = colorUpdateViewModel.floatingToolbarBackground,
+            shouldAnimate = isFloatingSheetActive,
+            lifecycleOwner = lifecycleOwner,
+        )
         val tabAdapter =
             FloatingToolbarTabAdapter(
                     colorUpdateViewModel = WeakReference(colorUpdateViewModel),
-                    shouldAnimateColor = { optionsViewModel.selectedOption.value == APP_SHAPE_GRID },
+                    shouldAnimateColor = isFloatingSheetActive,
                 )
                 .also { tabs.setAdapter(it) }
 
         val floatingSheetContainer =
-            view.requireViewById<ViewGroup>(R.id.shape_grid_floating_sheet_content_container)
+            view.requireViewById<ViewGroup>(R.id.floating_sheet_content_container)
+        ColorUpdateBinder.bind(
+            setColor = { color ->
+                DrawableCompat.setTint(
+                    DrawableCompat.wrap(floatingSheetContainer.background),
+                    color,
+                )
+            },
+            color = colorUpdateViewModel.colorSurfaceBright,
+            shouldAnimate = isFloatingSheetActive,
+            lifecycleOwner = lifecycleOwner,
+        )
 
         val shapeContent = view.requireViewById<View>(R.id.app_shape_container)
         val shapeOptionListAdapter =
-            createShapeOptionItemAdapter(view.context, lifecycleOwner, backgroundDispatcher)
+            createShapeOptionItemAdapter(
+                colorUpdateViewModel = colorUpdateViewModel,
+                shouldAnimateColor = isFloatingSheetActive,
+                lifecycleOwner = lifecycleOwner,
+                backgroundDispatcher = backgroundDispatcher,
+            )
         val shapeOptionList =
             view.requireViewById<RecyclerView>(R.id.shape_options).also {
                 it.initShapeOptionList(view.context, shapeOptionListAdapter)
@@ -98,7 +124,12 @@ object ShapeGridFloatingSheetBinder {
 
         val gridContent = view.requireViewById<View>(R.id.app_grid_container)
         val gridOptionListAdapter =
-            createGridOptionItemAdapter(lifecycleOwner, backgroundDispatcher)
+            createGridOptionItemAdapter(
+                colorUpdateViewModel = colorUpdateViewModel,
+                shouldAnimateColor = isFloatingSheetActive,
+                lifecycleOwner = lifecycleOwner,
+                backgroundDispatcher = backgroundDispatcher,
+            )
         val gridOptionList =
             view.requireViewById<RecyclerView>(R.id.grid_options).also {
                 it.initGridOptionList(view.context, gridOptionListAdapter)
@@ -209,30 +240,27 @@ object ShapeGridFloatingSheetBinder {
     }
 
     private fun createShapeOptionItemAdapter(
-        context: Context,
+        colorUpdateViewModel: ColorUpdateViewModel,
+        shouldAnimateColor: () -> Boolean,
         lifecycleOwner: LifecycleOwner,
         backgroundDispatcher: CoroutineDispatcher,
-    ): OptionItemAdapter<ShapeIconViewModel> =
-        OptionItemAdapter(
-            layoutResourceId = R.layout.shape_option,
+    ): OptionItemAdapter2<ShapeIconViewModel> =
+        OptionItemAdapter2(
+            layoutResourceId = R.layout.shape_option2,
             lifecycleOwner = lifecycleOwner,
             backgroundDispatcher = backgroundDispatcher,
-            foregroundTintSpec =
-                OptionItemBinder.TintSpec(
-                    selectedColor =
-                        context.getColor(com.android.wallpaper.R.color.system_on_surface),
-                    unselectedColor =
-                        context.getColor(com.android.wallpaper.R.color.system_on_surface),
-                ),
-            bindIcon = { foregroundView: View, shapeIcon: ShapeIconViewModel ->
-                val imageView = foregroundView as? ImageView
+            bindPayload = { view: View, shapeIcon: ShapeIconViewModel ->
+                val imageView = view.findViewById(R.id.foreground) as? ImageView
                 imageView?.let { ShapeIconViewBinder.bind(imageView, shapeIcon) }
+                return@OptionItemAdapter2 null
             },
+            colorUpdateViewModel = WeakReference(colorUpdateViewModel),
+            shouldAnimateColor = shouldAnimateColor,
         )
 
     private fun RecyclerView.initShapeOptionList(
         context: Context,
-        adapter: OptionItemAdapter<ShapeIconViewModel>,
+        adapter: OptionItemAdapter2<ShapeIconViewModel>,
     ) {
         apply {
             this.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
@@ -253,23 +281,27 @@ object ShapeGridFloatingSheetBinder {
     }
 
     private fun createGridOptionItemAdapter(
+        colorUpdateViewModel: ColorUpdateViewModel,
+        shouldAnimateColor: () -> Boolean,
         lifecycleOwner: LifecycleOwner,
         backgroundDispatcher: CoroutineDispatcher,
-    ): OptionItemAdapter2<GridIconViewModel> =
+    ): OptionItemAdapter2<Drawable> =
         OptionItemAdapter2(
             layoutResourceId = R.layout.grid_option2,
             lifecycleOwner = lifecycleOwner,
             backgroundDispatcher = backgroundDispatcher,
-            bindPayload = { view: View, gridIcon: GridIconViewModel ->
+            bindPayload = { view: View, gridIcon: Drawable ->
                 val imageView = view.findViewById(R.id.foreground) as? ImageView
-                imageView?.let { GridIconViewBinder.bind(imageView, gridIcon) }
+                imageView?.setImageDrawable(gridIcon)
                 return@OptionItemAdapter2 null
             },
+            colorUpdateViewModel = WeakReference(colorUpdateViewModel),
+            shouldAnimateColor = shouldAnimateColor,
         )
 
     private fun RecyclerView.initGridOptionList(
         context: Context,
-        adapter: OptionItemAdapter2<GridIconViewModel>,
+        adapter: OptionItemAdapter2<Drawable>,
     ) {
         apply {
             this.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)

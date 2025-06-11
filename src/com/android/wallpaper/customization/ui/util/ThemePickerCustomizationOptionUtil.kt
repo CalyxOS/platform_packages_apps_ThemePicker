@@ -16,26 +16,33 @@
 
 package com.android.wallpaper.customization.ui.util
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.compose.ui.platform.ComposeView
 import com.android.customization.picker.mode.shared.util.DarkModeLifecycleUtil
 import com.android.themepicker.R
+import com.android.wallpaper.config.BaseFlags
+import com.android.wallpaper.customization.ui.compose.ColorFloatingSheet
 import com.android.wallpaper.model.Screen
 import com.android.wallpaper.model.Screen.HOME_SCREEN
 import com.android.wallpaper.model.Screen.LOCK_SCREEN
 import com.android.wallpaper.picker.customization.ui.util.CustomizationOptionUtil
 import com.android.wallpaper.picker.customization.ui.util.DefaultCustomizationOptionUtil
+import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
 
 @ActivityScoped
 class ThemePickerCustomizationOptionUtil
 @Inject
-constructor(private val defaultCustomizationOptionUtil: DefaultCustomizationOptionUtil) :
-    CustomizationOptionUtil {
+constructor(
+    private val defaultCustomizationOptionUtil: DefaultCustomizationOptionUtil,
+    @ActivityContext private val context: Context,
+) : CustomizationOptionUtil {
 
     // Instantiate DarkModeLifecycleUtil for it to observe lifecycle and update DarkModeRepository
     @Inject lateinit var darkModeLifecycleUtil: DarkModeLifecycleUtil
@@ -43,14 +50,16 @@ constructor(private val defaultCustomizationOptionUtil: DefaultCustomizationOpti
     enum class ThemePickerLockCustomizationOption : CustomizationOptionUtil.CustomizationOption {
         CLOCK,
         SHORTCUTS,
-        SHOW_NOTIFICATIONS,
+        LOCK_SCREEN_NOTIFICATIONS,
         MORE_LOCK_SCREEN_SETTINGS,
     }
 
     enum class ThemePickerHomeCustomizationOption : CustomizationOptionUtil.CustomizationOption {
+        PACK_THEME,
         COLORS,
-        APP_SHAPE_GRID,
         THEMED_ICONS,
+        APP_SHAPE_GRID,
+        COLOR_CONTRAST,
     }
 
     override fun getOptionEntries(
@@ -64,6 +73,16 @@ constructor(private val defaultCustomizationOptionUtil: DefaultCustomizationOpti
             LOCK_SCREEN ->
                 buildList {
                     addAll(defaultOptionEntries)
+                    if (BaseFlags.get().isPackThemeEnabled()) {
+                        add(
+                            ThemePickerHomeCustomizationOption.PACK_THEME to
+                                layoutInflater.inflate(
+                                    R.layout.customization_option_entry_pack_theme,
+                                    optionContainer,
+                                    false,
+                                )
+                        )
+                    }
                     add(
                         ThemePickerLockCustomizationOption.CLOCK to
                             layoutInflater.inflate(
@@ -81,9 +100,9 @@ constructor(private val defaultCustomizationOptionUtil: DefaultCustomizationOpti
                             )
                     )
                     add(
-                        ThemePickerLockCustomizationOption.SHOW_NOTIFICATIONS to
+                        ThemePickerLockCustomizationOption.LOCK_SCREEN_NOTIFICATIONS to
                             layoutInflater.inflate(
-                                R.layout.customization_option_entry_show_notifications,
+                                R.layout.customization_option_entry_lock_screen_notifications,
                                 optionContainer,
                                 false,
                             )
@@ -100,10 +119,28 @@ constructor(private val defaultCustomizationOptionUtil: DefaultCustomizationOpti
             HOME_SCREEN ->
                 buildList {
                     addAll(defaultOptionEntries)
+                    if (BaseFlags.get().isPackThemeEnabled()) {
+                        add(
+                            ThemePickerHomeCustomizationOption.PACK_THEME to
+                                layoutInflater.inflate(
+                                    R.layout.customization_option_entry_pack_theme,
+                                    optionContainer,
+                                    false,
+                                )
+                        )
+                    }
                     add(
                         ThemePickerHomeCustomizationOption.COLORS to
                             layoutInflater.inflate(
                                 R.layout.customization_option_entry_colors,
+                                optionContainer,
+                                false,
+                            )
+                    )
+                    add(
+                        ThemePickerHomeCustomizationOption.THEMED_ICONS to
+                            layoutInflater.inflate(
+                                R.layout.customization_option_entry_themed_icons,
                                 optionContainer,
                                 false,
                             )
@@ -117,9 +154,9 @@ constructor(private val defaultCustomizationOptionUtil: DefaultCustomizationOpti
                             )
                     )
                     add(
-                        ThemePickerHomeCustomizationOption.THEMED_ICONS to
+                        ThemePickerHomeCustomizationOption.COLOR_CONTRAST to
                             layoutInflater.inflate(
-                                R.layout.customization_option_entry_themed_icons,
+                                R.layout.customization_option_entry_color_contrast,
                                 optionContainer,
                                 false,
                             )
@@ -134,6 +171,7 @@ constructor(private val defaultCustomizationOptionUtil: DefaultCustomizationOpti
     ): Map<CustomizationOptionUtil.CustomizationOption, View> {
         val map =
             defaultCustomizationOptionUtil.initFloatingSheet(bottomSheetContainer, layoutInflater)
+        val isComposeRefactorEnabled = BaseFlags.get().isComposeRefactorEnabled()
         return buildMap {
             putAll(map)
             put(
@@ -156,11 +194,15 @@ constructor(private val defaultCustomizationOptionUtil: DefaultCustomizationOpti
             )
             put(
                 ThemePickerHomeCustomizationOption.COLORS,
-                inflateFloatingSheet(
-                        ThemePickerHomeCustomizationOption.COLORS,
-                        bottomSheetContainer,
-                        layoutInflater,
-                    )
+                if (isComposeRefactorEnabled) {
+                        ComposeView(context).apply { setContent { ColorFloatingSheet() } }
+                    } else {
+                        inflateFloatingSheet(
+                            ThemePickerHomeCustomizationOption.COLORS,
+                            bottomSheetContainer,
+                            layoutInflater,
+                        )
+                    }
                     .also { bottomSheetContainer.addView(it) },
             )
             put(

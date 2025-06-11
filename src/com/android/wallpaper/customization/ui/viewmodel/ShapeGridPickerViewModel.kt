@@ -18,17 +18,17 @@ package com.android.wallpaper.customization.ui.viewmodel
 
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.drawable.Drawable
 import com.android.customization.model.ResourceConstants
 import com.android.customization.model.grid.GridOptionModel
 import com.android.customization.model.grid.ShapeOptionModel
 import com.android.customization.picker.grid.domain.interactor.ShapeGridInteractor
-import com.android.customization.picker.grid.ui.viewmodel.GridIconViewModel
 import com.android.customization.picker.grid.ui.viewmodel.ShapeIconViewModel
+import com.android.customization.widget.GridTileDrawable
 import com.android.themepicker.R
 import com.android.wallpaper.picker.common.icon.ui.viewmodel.Icon
 import com.android.wallpaper.picker.common.text.ui.viewmodel.Text
 import com.android.wallpaper.picker.customization.ui.viewmodel.FloatingToolbarTabViewModel
-import com.android.wallpaper.picker.option.ui.viewmodel.OptionItemViewModel
 import com.android.wallpaper.picker.option.ui.viewmodel.OptionItemViewModel2
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -51,7 +51,7 @@ class ShapeGridPickerViewModel
 @AssistedInject
 constructor(
     @ApplicationContext private val context: Context,
-    interactor: ShapeGridInteractor,
+    private val interactor: ShapeGridInteractor,
     @Assisted private val viewModelScope: CoroutineScope,
 ) {
 
@@ -105,7 +105,7 @@ constructor(
             overridingShapeOptionKey ?: selectedShapeKey
         }
 
-    val shapeOptions: Flow<List<OptionItemViewModel<ShapeIconViewModel>>> =
+    val shapeOptions: Flow<List<OptionItemViewModel2<ShapeIconViewModel>>> =
         interactor.shapeOptions
             .filterNotNull()
             .map { shapeOptions -> shapeOptions.map { toShapeOptionItemViewModel(it) } }
@@ -127,25 +127,30 @@ constructor(
             overridingGridOptionKey ?: selectedGridOption.key.value
         }
 
-    val gridOptions: Flow<List<OptionItemViewModel2<GridIconViewModel>>> =
+    val gridOptions: Flow<List<OptionItemViewModel2<Drawable>>> =
         interactor.gridOptions
             .filterNotNull()
             .map { gridOptions -> gridOptions.map { toGridOptionItemViewModel(it) } }
             .shareIn(scope = viewModelScope, started = SharingStarted.Lazily, replay = 1)
 
     val onApply: Flow<(suspend () -> Unit)?> =
-        combine(previewingGridKey, selectedGridOption, previewingShapeKey, selectedShapeKey) {
-            previewingGridOptionKey,
+        combine(overridingGridKey, selectedGridOption, overridingShapeKey, selectedShapeKey) {
+            overridingGridKey,
             selectedGridOption,
-            previewingShapeKey,
+            overridingShapeKey,
             selectedShapeKey ->
             if (
-                previewingGridOptionKey == selectedGridOption.key.value &&
-                    previewingShapeKey == selectedShapeKey
+                (overridingGridKey != null && overridingGridKey != selectedGridOption.key.value) ||
+                    (overridingShapeKey != null && overridingShapeKey != selectedShapeKey)
             ) {
-                null
+                {
+                    interactor.applySelectedOption(
+                        overridingShapeKey ?: selectedShapeKey,
+                        overridingGridKey ?: selectedGridOption.key.value,
+                    )
+                }
             } else {
-                { interactor.applySelectedOption(previewingShapeKey, previewingGridOptionKey) }
+                null
             }
         }
 
@@ -157,7 +162,7 @@ constructor(
 
     private fun toShapeOptionItemViewModel(
         option: ShapeOptionModel
-    ): OptionItemViewModel<ShapeIconViewModel> {
+    ): OptionItemViewModel2<ShapeIconViewModel> {
         val isSelected =
             previewingShapeKey
                 .map { it == option.key }
@@ -167,7 +172,7 @@ constructor(
                     initialValue = false,
                 )
 
-        return OptionItemViewModel(
+        return OptionItemViewModel2(
             key = MutableStateFlow(option.key),
             payload = ShapeIconViewModel(option.key, option.path),
             text = Text.Loaded(option.title),
@@ -183,18 +188,22 @@ constructor(
         )
     }
 
-    private fun toGridOptionItemViewModel(
-        option: GridOptionModel
-    ): OptionItemViewModel2<GridIconViewModel> {
-        val iconShapePath =
-            context.resources.getString(
-                Resources.getSystem()
-                    .getIdentifier(
-                        ResourceConstants.CONFIG_ICON_MASK,
-                        "string",
-                        ResourceConstants.ANDROID_PACKAGE,
-                    )
-            )
+    private fun toGridOptionItemViewModel(option: GridOptionModel): OptionItemViewModel2<Drawable> {
+        // Fallback to use GridTileDrawable when no resource found for the icon ID
+        val drawable =
+            interactor.getGridOptionDrawable(option.iconId)
+                ?: GridTileDrawable(
+                    option.cols,
+                    option.rows,
+                    context.resources.getString(
+                        Resources.getSystem()
+                            .getIdentifier(
+                                ResourceConstants.CONFIG_ICON_MASK,
+                                "string",
+                                ResourceConstants.ANDROID_PACKAGE,
+                            )
+                    ),
+                )
         val isSelected =
             previewingGridKey
                 .map { it == option.key }
@@ -203,11 +212,9 @@ constructor(
                     started = SharingStarted.Lazily,
                     initialValue = false,
                 )
-
         return OptionItemViewModel2(
             key = MutableStateFlow(option.key),
-            payload =
-                GridIconViewModel(columns = option.cols, rows = option.rows, path = iconShapePath),
+            payload = drawable,
             text = Text.Loaded(option.title),
             isSelected = isSelected,
             onClicked =

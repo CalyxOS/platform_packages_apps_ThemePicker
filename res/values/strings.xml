@@ -22,9 +22,9 @@
         device. [CHAR LIMIT=15] -->
     <string name="theme_title">Style</string>
 
-    <!-- Title of a section of the customization picker where the user can select a Clock face.
+    <!-- Title of a customization picker section where the user can customize lock screen clock.
         [CHAR LIMIT=15] -->
-    <string name="clock_title">Custom Clock</string>
+    <string name="clock_title">Clock</string>
 
     <!-- Description of a section of the customization picker where the user can select a Clock
         face. [CHAR LIMIT=15] -->
@@ -50,6 +50,12 @@
 
     <!-- Title of a tab to change the clock color. [CHAR LIMIT=15] -->
     <string name="clock_color">Color</string>
+
+    <!-- Title of a bottom sheet for changing the clock color. [CHAR LIMIT=15] -->
+    <string name="clock_color_title">Clock color</string>
+
+    <!-- Description of a bottom sheet for changing the clock color. [CHAR LIMIT=55] -->
+    <string name="clock_color_description">Match the wallpaper theme or choose your own color</string>
 
     <!-- Title of a clock color red option that will appear in the description of the custom clock section. [CHAR LIMIT=15] -->
     <string name="clock_color_red">Red</string>
@@ -89,6 +95,9 @@
 
     <!-- Title of a radio button to apply clock size large. [CHAR LIMIT=15] -->
     <string name="clock_size_large">Large</string>
+
+    <!-- Description for toggling on large clock on the lock screen -->
+    <string name="clock_size_large_description">Shown when notifications aren\'t visible</string>
 
     <!-- Title of a radio button to apply clock size small. [CHAR LIMIT=15] -->
     <string name="clock_size_small">Small</string>
@@ -131,6 +140,9 @@
 
     <!-- Content description of grid preview card. [CHAR_LIMIT=30]-->
     <string name="grid_preview_card_content_description">Grid preview</string>
+
+    <!-- Content description of theme preview card. [CHAR_LIMIT=30]-->
+    <string name="pack_theme_preview_card_content_description">Themes preview</string>
 
     <!-- Content description of font preview. [CHAR_LIMIT=30]-->
     <string name="font_preview_content_description">Font preview</string>
@@ -194,6 +206,9 @@
 
     <!--Title for a grid option, describing the number of columns and rows, eg: 4x4 [CHAR LIMIT=10] -->
     <string name="grid_title_pattern"><xliff:g name="num_cols" example="1">%1$d</xliff:g>x<xliff:g name="num_rows" example="1">%2$d</xliff:g></string>
+
+    <!--Copntent description for a grid option, describing the number of columns and rows, eg: 4 by 4 [CHAR LIMIT=10] -->
+    <string name="grid_content_description"><xliff:g name="num_cols" example="1">%1$d</xliff:g> by <xliff:g name="num_rows" example="1">%2$d</xliff:g></string>
 
     <!-- Label of what will happen when user tap on apply button to change grid. [CHAR LIMIT=50] -->
     <string name="apply_grid_btn_note">Changing grid size will reload workspace and may take a few seconds.</string>
@@ -332,14 +347,18 @@
     <!-- The title of mode section view. [CHAR_LIMIT=20] -->
     <string name="mode_title" msgid="1000319159005403986">Dark theme</string>
     <string name="mode_disabled_msg" msgid="1926077857799715086">Temporarily disabled due to Battery Saver</string>
-    <!-- The text for A11y announcement when theme changes. -->
-    <string name="mode_changed">Theme changed</string>
 
     <!-- Title of a section of the customization where the user can select color override for icon. [CHAR LIMIT=30] -->
     <string name="themed_icon_title" msgid="4305612684940220645">Themed icons</string>
 
+    <!-- Title of a section of the customization where the user can select color override for icon. [CHAR LIMIT=30] -->
+    <string name="pack_theme_title" msgid="4305612684940220645">Themes</string>
+
     <!-- Title of the tag to indicate beta version. [CHAR LIMIT=6] -->
     <string name="beta_title">Beta</string>
+
+    <!-- The description of theme picker entry. [CHAR LIMIT=30] -->
+    <string name="theme_packs_description">Discover Pixel themes</string>
 
     <!-- The content description of grid picker entry. [CHAR LIMIT=NONE] -->
     <string name="gird_picker_entry_content_description" msgid="7538418512525897691">Change app grid</string>
@@ -368,6 +387,13 @@
     [CHAR LIMIT=32].
     -->
     <string name="color_picker_title">System colors</string>
+
+    <!--
+    Title for a customization picker section where the user can configure the system colors by
+    selecting from a list of color options.
+    [CHAR LIMIT=32].
+    -->
+    <string name="system_colors_title">Colors</string>
 
     <!--
     Name of the slot on the "start" side of the bottom of the lock screen, where lock screen
@@ -482,12 +508,28 @@
     <string name="show_notifications_on_lock_screen">Show notifications on the lock screen</string>
 
     <!--
+    Title for a section in a list of sections that leads to notifications on lock screen settings.
+
+    [CHAR LIMIT=32].
+    -->
+    <string name="lock_screen_notifications_section_title">Notifications on lock screen</string>
+
+
+    <!--
+    Description for a section in a list of sections that leads to notifications on lock screen
+    settings.
+
+    [CHAR LIMIT=64].
+    -->
+    <string name="lock_screen_notifications_section_description">Manage how notifications appear and what to show</string>
+
+    <!--
     Title for a section in a list of sections in the settings app that allows the user to access
     additional settings related to lock screen behaviour.
 
     [CHAR LIMIT=32].
     -->
-    <string name="more_settings_section_title">More lock screen options</string>
+    <string name="more_settings_section_title">More lock screen settings</string>
 
     <!--
     Summary for a setting that lets the user access additional settings related to lock screen

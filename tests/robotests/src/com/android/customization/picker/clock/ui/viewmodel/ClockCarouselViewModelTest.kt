@@ -26,6 +26,8 @@ import com.android.customization.picker.clock.domain.interactor.ClockPickerSnaps
 import com.android.customization.picker.clock.shared.model.ClockMetadataModel
 import com.android.customization.picker.clock.ui.FakeClockViewFactory
 import com.android.customization.picker.clock.ui.view.ClockViewFactory
+import com.android.systemui.shared.customization.data.content.FakeCustomizationProviderClient
+import com.android.wallpaper.picker.customization.data.repository.CustomizationRuntimeValuesRepository
 import com.android.wallpaper.testing.FakeSnapshotStore
 import com.android.wallpaper.testing.collectLastValue
 import com.google.common.truth.Truth.assertThat
@@ -58,7 +60,7 @@ class ClockCarouselViewModelTest {
                     description = "description",
                     thumbnail = ColorDrawable(0),
                     isReactiveToTone = true,
-                    fontAxes = listOf(),
+                    axisPresetConfig = null,
                     selectedColorId = null,
                     colorToneProgress = ClockMetadataModel.DEFAULT_COLOR_TONE_PROGRESS,
                     seedColor = null,
@@ -103,12 +105,15 @@ class ClockCarouselViewModelTest {
     }
 
     private fun getClockPickerInteractor(repository: ClockPickerRepository): ClockPickerInteractor {
+        val customizationProviderClient = FakeCustomizationProviderClient()
         return ClockPickerInteractor(
                 repository = repository,
                 snapshotRestorer =
                     ClockPickerSnapshotRestorer(repository = repository).apply {
                         runBlocking { setUpSnapshotRestorer(store = FakeSnapshotStore()) }
                     },
+                customizationRuntimeValuesRepository =
+                    CustomizationRuntimeValuesRepository(customizationProviderClient),
             )
             .also { interactor = it }
     }

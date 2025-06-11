@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package com.android.wallpaper.customization.ui.viewmodel
+package com.android.customization.picker.themedicon.data.repository
 
-import android.graphics.drawable.Drawable
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
-data class ClockOptionItemViewModel(
-    val clockId: String,
-    val isSelected: Boolean,
-    val contentDescription: String,
-    val thumbnail: Drawable,
-)
+@Singleton
+class FakeThemedIconRepository @Inject constructor() : ThemedIconRepository {
+    override val isAvailable = MutableStateFlow(true).asStateFlow()
+
+    private val _isActivated = MutableStateFlow(false)
+    override val isActivated = _isActivated.asStateFlow()
+
+    override suspend fun setThemedIconEnabled(enabled: Boolean) {
+        _isActivated.value = enabled
+    }
+}

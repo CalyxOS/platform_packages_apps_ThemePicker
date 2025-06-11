@@ -19,15 +19,17 @@
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="1647136562008520313">"Plano de fundo e estilo"</string>
     <string name="theme_title" msgid="2144932106319405101">"Estilo"</string>
-    <string name="clock_title" msgid="1974314575211361352">"Relógio personalizado"</string>
+    <string name="clock_title" msgid="2126046720254613991">"Relógio"</string>
     <string name="clock_description" msgid="3563839327378948">"Escolha um relógio personalizado"</string>
     <string name="clock_picker_entry_content_description" msgid="8377139273468595734">"Edite um relógio personalizado"</string>
-    <string name="select_clock_action_description" msgid="5025888763471843648">"Opção de aparência do relógio: <xliff:g id="ID_1">%1$s</xliff:g>"</string>
+    <string name="select_clock_action_description" msgid="5025888763471843648">"Opção de mostrador do relógio: <xliff:g id="ID_1">%1$s</xliff:g>"</string>
     <string name="clock_settings_title" msgid="2050906379377120431">"Cor/tam. do relógio"</string>
     <string name="clock_color_and_size_title" msgid="7146791234905111351">"Cor e tamanho do relógio"</string>
     <string name="clock_color_and_size_description" msgid="6578061553012886817">"<xliff:g id="ID_1">%1$s</xliff:g>, <xliff:g id="ID_2">%2$s</xliff:g>"</string>
     <string name="clock_style" msgid="6847711178193804308">"Estilo"</string>
     <string name="clock_color" msgid="8081608867289156163">"Cor"</string>
+    <string name="clock_color_title" msgid="4484141281632973058">"Cor do relógio"</string>
+    <string name="clock_color_description" msgid="1493964392794026841">"Combinar com o tema do plano de fundo ou escolher a cor"</string>
     <string name="clock_color_red" msgid="3843504214807597810">"Vermelho"</string>
     <string name="clock_color_orange" msgid="4175805201144275804">"Laranja"</string>
     <string name="clock_color_yellow" msgid="7391699163247349977">"Amarelo"</string>
@@ -41,6 +43,7 @@
     <string name="clock_size_dynamic" msgid="1023930312455061642">"Dinâmico"</string>
     <string name="clock_size_dynamic_description" msgid="2776620745774561662">"O tamanho do relógio muda de acordo com o conteúdo na tela de bloqueio"</string>
     <string name="clock_size_large" msgid="3143248715744138979">"Grande"</string>
+    <string name="clock_size_large_description" msgid="1171001745473029918">"Aparece quando as notificações não estão visíveis"</string>
     <string name="clock_size_small" msgid="2280449912094164133">"Pequeno"</string>
     <string name="clock_size_small_description" msgid="4089511196955732480">"Um relógio pequeno aparece no canto da tela"</string>
     <string name="clock_font_editor_apply" msgid="5965611025879105293">"Aplicar mudanças na fonte do relógio"</string>
@@ -53,6 +56,7 @@
     <string name="keep_my_wallpaper" msgid="8012385376769568517">"Manter o plano de fundo atual"</string>
     <string name="theme_preview_card_content_description" msgid="5989222908619535533">"Visualização do estilo"</string>
     <string name="grid_preview_card_content_description" msgid="8449383777584714842">"Visualização da grade"</string>
+    <string name="pack_theme_preview_card_content_description" msgid="2964867375123559641">"Visualização de temas"</string>
     <string name="font_preview_content_description" msgid="128230439293337891">"Visualização da fonte"</string>
     <string name="icon_preview_content_description" msgid="7761101284351952890">"Visualização do ícone"</string>
     <string name="color_preview_content_description" msgid="4879120462082058124">"Visualização da cor"</string>
@@ -72,6 +76,7 @@
     <string name="font_card_body" msgid="6790525594503904468">"Adicione suas fontes favoritas a cada tela"</string>
     <string name="grid_options_title" msgid="7071930966989877023">"Escolha o tamanho da grade"</string>
     <string name="grid_title_pattern" msgid="9188866567612607806">"<xliff:g id="ID_1">%1$d</xliff:g>x<xliff:g id="ID_2">%2$d</xliff:g>"</string>
+    <string name="grid_content_description" msgid="5312080295600578441">"<xliff:g id="ID_1">%1$d</xliff:g> por <xliff:g id="ID_2">%2$d</xliff:g>"</string>
     <string name="apply_grid_btn_note" msgid="2966021967355139181">"A mudança do tamanho da grade recarrega o espaço de trabalho e pode levar alguns segundos."</string>
     <string name="toast_of_changing_grid" msgid="3515633981312731121">"Recarregando o espaço de trabalho com uma grade %1$s"</string>
     <string name="toast_of_failure_to_change_grid" msgid="1349622908271736044">"Falha ao recarregar o espaço de trabalho com uma grade %1$s"</string>
@@ -111,19 +116,21 @@
     <string name="accessibility_clock_slider_description" msgid="8374135133110681332">"Intensidade da cor"</string>
     <string name="mode_title" msgid="2394873501427436055">"Tema escuro"</string>
     <string name="mode_disabled_msg" msgid="9196245518435936512">"Desativado temporariamente pela Economia de bateria"</string>
-    <string name="mode_changed" msgid="2243581369395418584">"Tema trocado"</string>
     <string name="themed_icon_title" msgid="7312460430471956558">"Ícones com tema"</string>
+    <string name="pack_theme_title" msgid="3052703041673623611">"Temas"</string>
     <string name="beta_title" msgid="8703819523760746458">"Beta"</string>
+    <string name="theme_packs_description" msgid="4647233199054882039">"Descubra os temas do Pixel"</string>
     <string name="gird_picker_entry_content_description" msgid="9087651470212293439">"Mudar a grade de apps"</string>
     <string name="wallpaper_color_tab" msgid="1447926591721403840">"Cores do plano de fundo"</string>
     <string name="wallpaper_color_subheader" msgid="4044464573669965670">"Ícones, texto e mais para combinar com o plano de fundo"</string>
     <string name="wallpaper_color_title" msgid="5687965239180986458">"Cor do plano de fundo"</string>
     <string name="preset_color_tab" msgid="3133391839341329314">"Cores básicas"</string>
     <string name="preset_color_tab_2" msgid="1444107326712562538">"Outras cores"</string>
-    <string name="preset_color_subheader" msgid="8230588536141279371">"Escolha a cor que quiser para ícones, relógio e mais"</string>
+    <string name="preset_color_subheader" msgid="8230588536141279371">"Escolha uma para ícones, relógio e outros"</string>
     <string name="color_changed" msgid="7029571720331641235">"Cor trocada"</string>
     <string name="adaptive_color_title" msgid="1336508599235896205">"Dinâmica"</string>
     <string name="color_picker_title" msgid="6666830057938082864">"Cores do sistema"</string>
+    <string name="system_colors_title" msgid="8011422955674152731">"Cores"</string>
     <string name="keyguard_slot_name_bottom_start" msgid="8747677880200629719">"Atalho à esquerda"</string>
     <string name="keyguard_slot_name_bottom_end" msgid="2525487375680217083">"Atalho à direita"</string>
     <string name="keyguard_affordance_none" msgid="1751643933430782312">"Nenhum"</string>
@@ -138,9 +145,11 @@
     <string name="color_contrast_medium_title" msgid="8071574793250090215">"Médio"</string>
     <string name="color_contrast_high_title" msgid="5554685752479470200">"Alto"</string>
     <string name="keyguard_quick_affordance_two_selected_template" msgid="1757099194522296363">"<xliff:g id="FIRST">%1$s</xliff:g>, <xliff:g id="SECOND">%2$s</xliff:g>"</string>
-    <string name="keyguard_quick_affordance_none_selected" msgid="8494127020144112003">"Nenhum"</string>
+    <string name="keyguard_quick_affordance_none_selected" msgid="8494127020144112003">"Nenhuma"</string>
     <string name="show_notifications_on_lock_screen" msgid="4157744243084646720">"Mostrar notificações na tela de bloqueio"</string>
-    <string name="more_settings_section_title" msgid="1331425454775815958">"Mais opções da tela de bloqueio"</string>
+    <string name="lock_screen_notifications_section_title" msgid="906673283764252102">"Notificações na tela de bloqueio"</string>
+    <string name="lock_screen_notifications_section_description" msgid="3321937285144466046">"Gerencie como as notificações aparecem e o que mostrar"</string>
+    <string name="more_settings_section_title" msgid="6854797937797818510">"Mais configurações da tela de bloqueio"</string>
     <string name="more_settings_section_description" msgid="1860115709122398325">"Privacidade, Tocando agora e muito mais"</string>
     <string name="more_colors" msgid="3191071655353004591">"Mais cores"</string>
     <string name="content_description_dynamic_color_option" msgid="2191721655642529886">"Tema dinâmico principal"</string>

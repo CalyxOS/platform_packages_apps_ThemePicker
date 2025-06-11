@@ -22,22 +22,25 @@ import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.customization.model.color.ColorOptionsProvider
 import com.android.customization.module.logging.TestThemesUserEventLogger
-import com.android.customization.picker.color.data.repository.FakeColorPickerRepository
-import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor
-import com.android.customization.picker.color.domain.interactor.ColorPickerSnapshotRestorer
+import com.android.customization.picker.color.data.repository.FakeColorPickerRepository2
+import com.android.customization.picker.color.domain.interactor.ColorPickerInteractor2
 import com.android.customization.picker.color.shared.model.ColorType
 import com.android.customization.picker.color.ui.viewmodel.ColorOptionIconViewModel
+import com.android.customization.picker.mode.data.repository.DarkModeStateRepository
 import com.android.systemui.monet.Style
+import com.android.wallpaper.picker.customization.ui.viewmodel.ColorUpdateViewModel
 import com.android.wallpaper.picker.customization.ui.viewmodel.FloatingToolbarTabViewModel
 import com.android.wallpaper.picker.option.ui.viewmodel.OptionItemViewModel2
-import com.android.wallpaper.testing.FakeSnapshotStore
 import com.android.wallpaper.testing.collectLastValue
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
+import dagger.hilt.android.internal.lifecycle.RetainedLifecycleImpl
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -45,46 +48,47 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
+@HiltAndroidTest
 @OptIn(ExperimentalCoroutinesApi::class)
 @SmallTest
 @RunWith(RobolectricTestRunner::class)
 class ColorPickerViewModel2Test {
+    @get:Rule var hiltRule = HiltAndroidRule(this)
+
     private val logger = TestThemesUserEventLogger()
     private lateinit var underTest: ColorPickerViewModel2
-    private lateinit var repository: FakeColorPickerRepository
-    private lateinit var interactor: ColorPickerInteractor
-    private lateinit var store: FakeSnapshotStore
+    private lateinit var colorUpdateViewModel: ColorUpdateViewModel
 
     private lateinit var context: Context
     private lateinit var testScope: TestScope
 
+    @Inject lateinit var repository: FakeColorPickerRepository2
+    @Inject lateinit var interactor: ColorPickerInteractor2
+    @Inject lateinit var darkModeStateRepository: DarkModeStateRepository
+
     @Before
     fun setUp() {
+        hiltRule.inject()
+
         context = InstrumentationRegistry.getInstrumentation().targetContext
         val testDispatcher = UnconfinedTestDispatcher()
         Dispatchers.setMain(testDispatcher)
         testScope = TestScope(testDispatcher)
-        repository = FakeColorPickerRepository(context = context)
-        store = FakeSnapshotStore()
 
-        interactor =
-            ColorPickerInteractor(
-                repository = repository,
-                snapshotRestorer =
-                    ColorPickerSnapshotRestorer(repository = repository).apply {
-                        runBlocking { setUpSnapshotRestorer(store = store) }
-                    },
-            )
+        colorUpdateViewModel =
+            ColorUpdateViewModel(context, RetainedLifecycleImpl(), darkModeStateRepository)
 
         underTest =
             ColorPickerViewModel2(
                 context = context,
                 interactor = interactor,
                 logger = logger,
+                colorUpdateViewModel = colorUpdateViewModel,
                 viewModelScope = testScope.backgroundScope,
             )
 
@@ -112,7 +116,7 @@ class ColorPickerViewModel2Test {
 
             assertThat(job.isActive).isTrue()
 
-            underTest.onApplyComplete()
+            colorUpdateViewModel.updateColors()
 
             assertThat(job.isActive).isFalse()
         }
@@ -245,7 +249,7 @@ class ColorPickerViewModel2Test {
     private suspend fun TestScope.applySelectedColorOption() {
         val onApply = collectLastValue(underTest.onApply)()
         testScope.launch { onApply?.invoke() }
-        underTest.onApplyComplete()
+        colorUpdateViewModel.updateColors()
     }
 
     /**

@@ -16,23 +16,49 @@
 
 package com.android.customization.picker.mode.ui.binder
 
-import android.widget.Switch
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.android.customization.picker.mode.ui.viewmodel.DarkModeViewModel
+import com.android.wallpaper.customization.ui.binder.SwitchColorBinder
+import com.android.wallpaper.picker.customization.ui.viewmodel.ColorUpdateViewModel
+import com.google.android.material.materialswitch.MaterialSwitch
 import kotlinx.coroutines.launch
 
 object DarkModeBinder {
-    fun bind(darkModeToggle: Switch, viewModel: DarkModeViewModel, lifecycleOwner: LifecycleOwner) {
+    fun bind(
+        darkModeToggle: MaterialSwitch,
+        viewModel: DarkModeViewModel,
+        colorUpdateViewModel: ColorUpdateViewModel,
+        shouldAnimateColor: () -> Boolean,
+        lifecycleOwner: LifecycleOwner,
+    ) {
         lifecycleOwner.lifecycleScope.launch {
             lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { viewModel.isEnabled.collect { darkModeToggle.isEnabled = it } }
-                launch { viewModel.previewingIsDarkMode.collect { darkModeToggle.isChecked = it } }
+                launch {
+                    var binding: SwitchColorBinder.Binding? = null
+                    viewModel.previewingIsDarkMode.collect {
+                        darkModeToggle.isChecked = it
+                        binding?.destroy()
+                        binding =
+                            SwitchColorBinder.bind(
+                                switch = darkModeToggle,
+                                isChecked = it,
+                                colorUpdateViewModel = colorUpdateViewModel,
+                                shouldAnimateColor = shouldAnimateColor,
+                                lifecycleOwner = lifecycleOwner,
+                            )
+                    }
+                }
                 launch {
                     viewModel.toggleDarkMode.collect {
-                        darkModeToggle.setOnCheckedChangeListener { _, _ -> it.invoke() }
+                        // Use onClickListener instead of onCheckedChangeListener to avoid the
+                        // potential cycle of: system value changes->the toggle isChecked value is
+                        // updated->the onCheckedChangeListener is called->the overriding value is
+                        // set. The overriding value should not be set by the system, only by user.
+                        darkModeToggle.setOnClickListener { _ -> it.invoke() }
                     }
                 }
             }

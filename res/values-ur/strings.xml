@@ -19,7 +19,7 @@
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" msgid="1647136562008520313">"وال پیپر اور طرز"</string>
     <string name="theme_title" msgid="2144932106319405101">"طرز"</string>
-    <string name="clock_title" msgid="1974314575211361352">"حسب ضرورت گھڑی"</string>
+    <string name="clock_title" msgid="2126046720254613991">"گھڑی"</string>
     <string name="clock_description" msgid="3563839327378948">"حسب ضرورت گھڑی چنیں"</string>
     <string name="clock_picker_entry_content_description" msgid="8377139273468595734">"حسب ضرورت گھڑی کو تبدیل کریں"</string>
     <string name="select_clock_action_description" msgid="5025888763471843648">"گھڑی کے رخ کا اختیار <xliff:g id="ID_1">%1$s</xliff:g>"</string>
@@ -28,6 +28,8 @@
     <string name="clock_color_and_size_description" msgid="6578061553012886817">"<xliff:g id="ID_1">%1$s</xliff:g>، <xliff:g id="ID_2">%2$s</xliff:g>"</string>
     <string name="clock_style" msgid="6847711178193804308">"اسٹائل"</string>
     <string name="clock_color" msgid="8081608867289156163">"رنگ"</string>
+    <string name="clock_color_title" msgid="4484141281632973058">"گھڑی کا رنگ"</string>
+    <string name="clock_color_description" msgid="1493964392794026841">"وال پیپر کی تھیم سے مماثل کریں یا اپنا رنگ منتخب کریں"</string>
     <string name="clock_color_red" msgid="3843504214807597810">"سرخ"</string>
     <string name="clock_color_orange" msgid="4175805201144275804">"نارنجی"</string>
     <string name="clock_color_yellow" msgid="7391699163247349977">"زرد"</string>
@@ -41,6 +43,7 @@
     <string name="clock_size_dynamic" msgid="1023930312455061642">"ڈائنیمک"</string>
     <string name="clock_size_dynamic_description" msgid="2776620745774561662">"مقفل اسکرین کے مواد کے مطابق گھڑی کا سائز تبدیل ہوتا ہے"</string>
     <string name="clock_size_large" msgid="3143248715744138979">"بڑا"</string>
+    <string name="clock_size_large_description" msgid="1171001745473029918">"اطلاعات نظر نہ آنے پر اسے دکھایا جاتا ہے"</string>
     <string name="clock_size_small" msgid="2280449912094164133">"چھوٹا"</string>
     <string name="clock_size_small_description" msgid="4089511196955732480">"آپ کی اسکرین کے کونے میں ایک چھوٹی گھڑی دکھائی دیتی ہے"</string>
     <string name="clock_font_editor_apply" msgid="5965611025879105293">"گھڑی کے فونٹ کی تبدیلیاں لاگو کریں"</string>
@@ -53,6 +56,7 @@
     <string name="keep_my_wallpaper" msgid="8012385376769568517">"حالیہ وال پیپر رکھیں"</string>
     <string name="theme_preview_card_content_description" msgid="5989222908619535533">"طرز کا پیش منظر"</string>
     <string name="grid_preview_card_content_description" msgid="8449383777584714842">"گرڈ کا پیش منظر"</string>
+    <string name="pack_theme_preview_card_content_description" msgid="2964867375123559641">"تھیمز کا پیش منظر"</string>
     <string name="font_preview_content_description" msgid="128230439293337891">"فونٹ کا پیش منظر"</string>
     <string name="icon_preview_content_description" msgid="7761101284351952890">"آئیکن کا پیش منظر"</string>
     <string name="color_preview_content_description" msgid="4879120462082058124">"رنگ کا پیش منظر"</string>
@@ -72,6 +76,7 @@
     <string name="font_card_body" msgid="6790525594503904468">"ہر اسکرین میں اپنے پسندیدہ فونٹس شامل کریں"</string>
     <string name="grid_options_title" msgid="7071930966989877023">"گرڈ کا سائز منتخب کریں"</string>
     <string name="grid_title_pattern" msgid="9188866567612607806">"<xliff:g id="ID_1">%1$d</xliff:g>x<xliff:g id="ID_2">%2$d</xliff:g>"</string>
+    <string name="grid_content_description" msgid="5312080295600578441">"<xliff:g id="ID_2">%2$d</xliff:g> کا گانا <xliff:g id="ID_1">%1$d</xliff:g>"</string>
     <string name="apply_grid_btn_note" msgid="2966021967355139181">"GRid کا سائز تبدیل کرنے سے ورک اسپیس دوبارہ لوڈ ہو جائے گا اور اس میں چند سیکنڈ لگ سکتے ہیں۔"</string>
     <string name="toast_of_changing_grid" msgid="3515633981312731121">"%1$s GRid کے ساتھ ورک اسپیس کو دوبارہ لوڈ کرنا"</string>
     <string name="toast_of_failure_to_change_grid" msgid="1349622908271736044">"%1$s GRid کے ساتھ ورک اسپیس کو دوبارہ لوڈ کرنے میں ناکام"</string>
@@ -111,9 +116,10 @@
     <string name="accessibility_clock_slider_description" msgid="8374135133110681332">"رنگ کی شدت"</string>
     <string name="mode_title" msgid="2394873501427436055">"گہری تھیم"</string>
     <string name="mode_disabled_msg" msgid="9196245518435936512">"بیٹری سیور کی وجہ سے عارضی طور پر غیر فعال ہے"</string>
-    <string name="mode_changed" msgid="2243581369395418584">"تھیم تبدیل کر دی گئی"</string>
     <string name="themed_icon_title" msgid="7312460430471956558">"تھیم کردہ آئیکنز"</string>
+    <string name="pack_theme_title" msgid="3052703041673623611">"تھیمز"</string>
     <string name="beta_title" msgid="8703819523760746458">"بی ٹا"</string>
+    <string name="theme_packs_description" msgid="4647233199054882039">"‫Pixel تھیمز دریافت کریں"</string>
     <string name="gird_picker_entry_content_description" msgid="9087651470212293439">"ایپ گرڈ تبدیل کریں"</string>
     <string name="wallpaper_color_tab" msgid="1447926591721403840">"وال پیپر کے رنگ"</string>
     <string name="wallpaper_color_subheader" msgid="4044464573669965670">"آئیکنز، ٹیکسٹ اور مزید آپ کے وال پیپر سے مماثل رنگ"</string>
@@ -124,6 +130,7 @@
     <string name="color_changed" msgid="7029571720331641235">"رنگ کو تبدیل کر دیا گیا"</string>
     <string name="adaptive_color_title" msgid="1336508599235896205">"ڈائنیمک"</string>
     <string name="color_picker_title" msgid="6666830057938082864">"سسٹم کے رنگ"</string>
+    <string name="system_colors_title" msgid="8011422955674152731">"رنگ"</string>
     <string name="keyguard_slot_name_bottom_start" msgid="8747677880200629719">"دائیں جانب کا شارٹ کٹ"</string>
     <string name="keyguard_slot_name_bottom_end" msgid="2525487375680217083">"بائیں جانب کا شارٹ کٹ"</string>
     <string name="keyguard_affordance_none" msgid="1751643933430782312">"کوئی نہیں"</string>
@@ -140,7 +147,9 @@
     <string name="keyguard_quick_affordance_two_selected_template" msgid="1757099194522296363">"<xliff:g id="FIRST">%1$s</xliff:g>، <xliff:g id="SECOND">%2$s</xliff:g>"</string>
     <string name="keyguard_quick_affordance_none_selected" msgid="8494127020144112003">"کوئی نہیں"</string>
     <string name="show_notifications_on_lock_screen" msgid="4157744243084646720">"مقفل اسکرین پر اطلاعات دکھائیں"</string>
-    <string name="more_settings_section_title" msgid="1331425454775815958">"مقفل اسکرین کے مزید اختیارات"</string>
+    <string name="lock_screen_notifications_section_title" msgid="906673283764252102">"لاک اسکرین پر اطلاعات"</string>
+    <string name="lock_screen_notifications_section_description" msgid="3321937285144466046">"نظم کریں کہ اطلاعات کیسے ظاہر ہوں اور کیا دکھانا ہے"</string>
+    <string name="more_settings_section_title" msgid="6854797937797818510">"مقفل اسکرین کی مزید ترتیبات"</string>
     <string name="more_settings_section_description" msgid="1860115709122398325">"رازداری، Now Playing اور مزید"</string>
     <string name="more_colors" msgid="3191071655353004591">"مزید رنگ"</string>
     <string name="content_description_dynamic_color_option" msgid="2191721655642529886">"بنیادی ڈائنیمک تھیم"</string>
