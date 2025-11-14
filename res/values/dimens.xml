@@ -33,6 +33,7 @@
     <dimen name="options_container_width">0dp</dimen>
     <dimen name="option_bottom_margin">8dp</dimen>
     <dimen name="option_padding_horizontal">2dp</dimen>
+    <dimen name="option_label_width">100dp</dimen>
     <dimen name="option_tile_width">80dp</dimen>
     <dimen name="option_tile_radius">20dp</dimen>
     <dimen name="option_tile_margin_horizontal">6dp</dimen>
@@ -200,6 +201,10 @@
     <dimen name="customization_option_entry_icon_image_size">24dp</dimen>
     <dimen name="customization_option_entry_clock_icon_size">44dp</dimen>
     <dimen name="customization_option_entry_color_icon_size">48dp</dimen>
+
+    <!-- preview page -->
+    <dimen name="preview_page_top_margin">16dp</dimen>
+    <dimen name="preview_page_bottom_margin">16dp</dimen>
 
     <!-- Clock font control dimensions -->
     <dimen name="clock_font_axis_name_width">64dp</dimen>
