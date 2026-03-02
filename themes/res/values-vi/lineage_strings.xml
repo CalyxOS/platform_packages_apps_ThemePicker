@@ -15,12 +15,16 @@
   ~ limitations under the License.
   -->
 <resources>
-    <color name="color_secondary_monochromatic">#333333</color>
-    <color name="color_secondary_rainbow1">#FFB2B5</color>
-    <color name="color_secondary_rainbow2">#FFB868</color>
-    <color name="color_secondary_rainbow3">#E9C44A</color>
-    <color name="color_secondary_rainbow4">#BAF293</color>
-    <color name="color_secondary_rainbow5">#96CBFF</color>
-    <color name="color_secondary_rainbow6">#CBBFFF</color>
-    <color name="color_secondary_rainbow7">#F5ACFB</color>
+    <string name="default_color_name">Cổ điển</string>
+    <string name="bundle1_color_name">Than</string>
+    <string name="bundle2_color_name">Giấy</string>
+    <string name="bundle3_color_name">Mặt trời</string>
+    <string name="indigo_color_name">Chàm</string>
+    <string name="iris_color_name">Diên vĩ</string>
+    <string name="jade_color_name">Ngọc bích</string>
+    <string name="lemongrass_color_name">Sả</string>
+    <string name="moonstone_color_name">Đá mặt trăng</string>
+    <string name="obsidian_color_name">Đá vỏ chai</string>
+    <string name="peony_color_name">Mẫu đơn</string>
+    <string name="porcelain_color_name">Sứ</string>
 </resources>
